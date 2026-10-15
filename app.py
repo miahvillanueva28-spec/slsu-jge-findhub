@@ -26,14 +26,27 @@ from werkzeug.utils import secure_filename
 # APP CONFIGURATION
 # =============================================================================
 
-app = Flask(_name_)
+app = Flask(__name__)
 
 # On Render, DATABASE_URL should point to your PostgreSQL database.
 # Locally, the fallback SQLite database is used.
-DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "sqlite:///slsu_findhub.db"
+# Use PostgreSQL in hosted production (for example, Render). Render's
+# application filesystem is not durable unless a persistent disk is configured,
+# so never silently fall back to SQLite when running on Render.
+_configured_database_url = os.getenv("DATABASE_URL")
+if os.getenv("RENDER") and not _configured_database_url:
+    raise RuntimeError(
+        "DATABASE_URL is required on Render. Attach a persistent PostgreSQL "
+        "database before starting the app, or reports may be lost on redeploy."
+    )
+
+# Local development uses a database in Flask's instance directory, not the
+# current working directory (which can change depending on how the app starts).
+os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), "instance"), exist_ok=True)
+LOCAL_DATABASE_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "instance", "slsu_findhub.db"
 )
+DATABASE_URL = _configured_database_url or ("sqlite:///" + LOCAL_DATABASE_PATH.replace(os.sep, "/"))
 
 # Compatibility for PostgreSQL connection strings.
 if DATABASE_URL.startswith("postgres://"):
@@ -147,7 +160,7 @@ MAX_CONTACT = 150
 
 class Item(db.Model):
 
-    _tablename_ = "items"
+    __tablename__ = "items"
 
     id = db.Column(
         db.Integer,
@@ -3627,9 +3640,22 @@ ADMIN_BODY = r"""
 
 
 
-                            <span class="no-delete">
-                                Record cannot be deleted here
-                            </span>
+                            <form
+                                method="post"
+                                action="{{ url_for('admin_delete_item', item_id=item.id) }}"
+                                style="margin-top:8px"
+                                onsubmit="return confirm('Permanently delete report #{{ item.id }}? This cannot be undone.');"
+                            >
+                                <input
+                                    type="hidden"
+                                    name="csrf_token"
+                                    value="{{ csrf() }}"
+                                >
+                                <button class="btn btn-small" type="submit"
+                                        style="background:#b82c3c;color:white">
+                                    Delete Report
+                                </button>
+                            </form>
 
 
                         </td>
@@ -4448,6 +4474,36 @@ def admin_status(item_id):
 
 
 # =============================================================================
+# ADMIN DELETE REPORT
+# =============================================================================
+
+@app.post("/admin/items/<int:item_id>/delete")
+@admin_required
+def admin_delete_item(item_id):
+    # Deletion is possible only through this authenticated, CSRF-protected
+    # POST route. Public users cannot delete reports.
+    if not valid_csrf(request.form.get("csrf_token")):
+        flash("Your admin session expired. Please sign in again.", "error")
+        return redirect(url_for("admin_login"))
+
+    item = db.session.get(Item, item_id)
+    if item is None:
+        abort(404)
+
+    try:
+        db.session.delete(item)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("Failed to delete report id=%s", item_id)
+        flash("The report could not be deleted. No changes were saved.", "error")
+        return redirect(url_for("admin_dashboard"))
+
+    flash(f"Report #{item_id} was permanently deleted by the administrator.", "success")
+    return redirect(url_for("admin_dashboard"))
+
+
+# =============================================================================
 # HEALTH CHECK
 # =============================================================================
 
@@ -4478,14 +4534,10 @@ def health():
 
     except Exception as exc:
 
+        app.logger.exception("Database health check failed")
         return jsonify({
-
-            "status":
-                "error",
-
-            "database":
-                str(exc)
-
+            "status": "error",
+            "database": "unavailable"
         }), 500
 
 
@@ -4614,7 +4666,7 @@ def internal_error(_error):
 # START APPLICATION
 # =============================================================================
 
-if _name_ == "_main_":
+if __name__ == "__main__":
 
     port = int(
         os.getenv(
