@@ -11,7 +11,7 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", secrets.token_hex(32))
-DATA_DIR = os.environ.get("DATA_DIR", "/var/data")
+DATA_DIR = os.environ.get("DATA_DIR", "/tmp/slsu_lost_found")
 os.makedirs(DATA_DIR, exist_ok=True)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
     "DATABASE_URL", "sqlite:///" + os.path.join(DATA_DIR, "lost_found.db")
@@ -110,7 +110,7 @@ def create_report():
 
 @app.route("/uploads/<path:filename>")
 def uploaded_file(filename):
-    # Uploads are stored on the Render persistent disk.
+    # Uploads are stored in DATA_DIR. On Render Free, local files are temporary.
     from flask import send_from_directory
     return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
