@@ -1,78 +1,119 @@
 {% extends "base.html" %}
-
-{% block title %}Report Details | SLSU JGE FindHub{% endblock %}
+{% block title %}{{ report.item_name }} | FindHub{% endblock %}
 
 {% block content %}
 <section class="panel">
-  <p><a href="{{ url_for('home') }}">← Back to Home</a></p>
+  <a href="{{ url_for('home') }}">← Back to reports</a>
 
-  <h1>{{ report.item_name }}</h1>
+  <div class="sticker-row" style="margin-top:18px">
+    <span class="sticker">
+      <span>{% if report.report_type == 'Found' %}✨{% else %}🔎{% endif %}</span>
+      {{ report.report_type }} item
+    </span>
+    <span class="sticker"><span>📌</span>Report #{{ report.id }}</span>
+  </div>
 
-  <p>
-    <span class="pill">{{ report.report_type }}</span>
-    <span class="pill">{{ report.status }}</span>
-  </p>
-
-  {% if report.photo %}
-    <p>
-      <img
-        class="item-photo"
-        src="{{ url_for('uploaded_photo', filename=report.photo) }}"
-        alt="Photo of {{ report.item_name }}"
-      >
-    </p>
-  {% endif %}
-
-  <h2>Item Details</h2>
-
-  <p><strong>Category:</strong> {{ report.category }}</p>
-  <p><strong>Description:</strong><br>{{ report.description }}</p>
-  <p><strong>Location:</strong> {{ report.location }}</p>
-  <p><strong>Date:</strong> {{ report.incident_date }}</p>
-  <p><strong>Posted:</strong> {{ report.created_at }}</p>
-</section>
-
-<section class="panel">
-  <h2>Contact Information</h2>
-
-  {% if report.contact_public %}
-    <p><strong>Name:</strong> {{ report.contact_name }}</p>
-    <p><strong>Contact:</strong> {{ report.contact }}</p>
-  {% else %}
-    <p>
-      The reporter has chosen not to display their contact information
-      publicly. Please contact the campus administrator for assistance.
-    </p>
-  {% endif %}
-</section>
-
-<section class="panel">
-  <h2>Claim This Item</h2>
-  <p class="muted">
-    If this item belongs to you, provide details that can help verify ownership.
-  </p>
-
-  <form
-    method="POST"
-    action="{{ url_for('submit_claim', report_id=report.id) }}"
-  >
-    <label for="claimant_name">Your Name *</label>
-    <input id="claimant_name" name="claimant_name" required>
-
-    <label for="claimant_contact">Your Contact Information *</label>
-    <input id="claimant_contact" name="claimant_contact" required>
-
-    <label for="claim_message">Proof of Ownership *</label>
-    <textarea
-      id="claim_message"
-      name="claim_message"
-      placeholder="Describe identifying details that only the owner would know."
-      required
-    ></textarea>
-
-    <div class="actions">
-      <button type="submit">Submit Claim</button>
+  <div class="detail-layout">
+    <div>
+      {% if report.photo %}
+        <img
+          class="detail-photo"
+          src="{{ url_for('uploaded_photo', filename=report.photo) }}"
+          alt="{{ report.item_name }}"
+        >
+      {% else %}
+        <div class="placeholder-photo" style="height:300px;border-radius:12px">
+          🔎
+        </div>
+      {% endif %}
     </div>
+
+    <div>
+      <span class="tag {% if report.report_type == 'Found' %}found{% endif %}">
+        {{ report.report_type|upper }} ITEM
+      </span>
+
+      <h2>{{ report.item_name }}</h2>
+
+      <p>
+        <strong>Status:</strong>
+        <span class="tag {% if report.status == 'Pending Claim' %}pending{% elif report.status == 'Returned' %}returned{% endif %}">
+          {{ report.status }}
+        </span>
+      </p>
+
+      <p><strong>Category:</strong> {{ report.category }}</p>
+      <p><strong>Location:</strong> {{ report.location }}</p>
+      <p><strong>Date lost/found:</strong> {{ report.incident_date }}</p>
+
+      <p><strong>Description:</strong></p>
+      <p style="white-space:pre-wrap">{{ report.description }}</p>
+
+      <p class="help">
+        Posted {{ report.created_at.strftime('%b %d, %Y at %I:%M %p') }} UTC
+      </p>
+
+      {% if report.contact_public %}
+        <hr>
+        <h3>Public contact details</h3>
+
+        {% if report.contact_name %}
+          <p><strong>Name:</strong> {{ report.contact_name }}</p>
+        {% endif %}
+
+        <p><strong>Contact:</strong> {{ report.contact }}</p>
+      {% else %}
+        <p class="help">🔒 Reporter contact details are private.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% if report.status not in ['Returned', 'Archived'] %}
+<section class="panel">
+  <h2>🤝 Claim this item</h2>
+  <p>
+    If you believe this item belongs to you, submit identifying details
+    for the administrator to verify.
+  </p>
+
+  <form method="POST" action="{{ url_for('submit_claim', report_id=report.id) }}">
+    <div class="form-grid">
+      <div>
+        <label for="claimant_name">Your name *</label>
+        <input id="claimant_name" name="claimant_name" maxlength="120" required>
+      </div>
+
+      <div>
+        <label for="student_or_staff_id">Student/Staff ID (optional)</label>
+        <input id="student_or_staff_id" name="student_or_staff_id" maxlength="80">
+      </div>
+
+      <div class="full">
+        <label for="contact">Contact method *</label>
+        <input
+          id="contact"
+          name="contact"
+          maxlength="180"
+          required
+          placeholder="Email or phone"
+        >
+      </div>
+
+      <div class="full">
+        <label for="proof">Proof of ownership *</label>
+        <textarea
+          id="proof"
+          name="proof"
+          maxlength="2000"
+          required
+          placeholder="Describe identifying details that only the owner may know."
+        ></textarea>
+      </div>
+    </div>
+
+    <button type="submit">📨 Submit Claim Privately</button>
   </form>
 </section>
+{% endif %}
 {% endblock %}
