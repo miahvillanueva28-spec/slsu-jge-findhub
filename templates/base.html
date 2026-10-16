@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -21,16 +22,16 @@
       font-family: Arial, sans-serif;
       color: var(--ink);
       background:
-        linear-gradient(rgba(3,35,23,.68), rgba(3,35,23,.72)),
-        url("{{ campus_photo }}") center/cover fixed no-repeat;
+        linear-gradient(rgba(3,35,23,.48), rgba(3,35,23,.54)),
+        url("{{ campus_photo }}") center center / cover fixed no-repeat;
     }
 
     a { color: var(--green); }
 
     .site-header {
-      background: rgba(5,75,47,.96);
+      background: rgba(5,75,47,.94);
       color: white;
-      padding: 18px 5%;
+      padding: 14px 5%;
       box-shadow: 0 4px 16px #0003;
     }
 
@@ -51,66 +52,76 @@
     }
 
     .brand img {
-      width: 58px;
-      height: 58px;
+      width: 52px;
+      height: 52px;
       object-fit: contain;
       border-radius: 50%;
       background: white;
       padding: 4px;
     }
 
-    .brand h1 { margin: 0 0 5px; font-size: 24px; }
+    .brand h1 { margin: 0 0 5px; font-size: 23px; }
     .brand p { margin: 0; font-size: 13px; }
 
-    nav { display: flex; gap: 9px; flex-wrap: wrap; }
+    nav {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
 
     nav a {
       color: white;
       text-decoration: none;
       font-weight: bold;
       font-size: 14px;
-      padding: 10px 13px;
+      padding: 9px 12px;
       border: 1px solid #ffffff8c;
       border-radius: 8px;
     }
 
-    nav a:hover { background: white; color: var(--green); }
+    nav a:hover {
+      background: white;
+      color: var(--green);
+    }
 
     .container {
-      width: 90%;
-      max-width: 1200px;
-      margin: 30px auto 45px;
+      width: 92%;
+      max-width: 1120px;
+      margin: 22px auto 32px;
     }
 
     .panel {
-      background: #fffffff5;
+      background: #fffffff2;
       border-radius: 16px;
-      padding: 24px;
+      padding: 22px;
       box-shadow: 0 8px 28px #0003;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
+    /* SMALLER WELCOME PANEL */
     .hero {
-      max-width: 1250px;
-      width: 90%;
-      margin: 30px auto 24px;
-      background: #e5f4e9f5;
+      max-width: 1000px;
+      width: calc(100% - 40px);
+      margin: 20px auto 16px;
+      background: rgba(229,244,233,.94);
       border-radius: 18px;
-      padding: 42px 24px;
+      padding: 26px 22px;
       text-align: center;
       box-shadow: 0 8px 28px #0003;
     }
 
     .hero h2 {
       color: var(--green);
-      font-size: clamp(28px, 4vw, 42px);
-      margin: 0 0 12px;
+      font-size: clamp(25px, 3.2vw, 36px);
+      line-height: 1.2;
+      margin: 0 0 10px;
     }
 
     .hero p {
-      max-width: 720px;
-      line-height: 1.7;
-      margin: 0 auto 20px;
+      max-width: 680px;
+      line-height: 1.55;
+      font-size: 15px;
+      margin: 0 auto 15px;
     }
 
     .button, button {
@@ -119,7 +130,7 @@
       border-radius: 8px;
       background: var(--bright);
       color: white;
-      padding: 11px 16px;
+      padding: 10px 15px;
       font-weight: bold;
       text-decoration: none;
       cursor: pointer;
@@ -138,25 +149,26 @@
     .sticker-row {
       display: flex;
       justify-content: center;
-      gap: 12px;
+      gap: 9px;
       flex-wrap: wrap;
-      margin: 0 0 20px;
+      margin: 0 0 14px;
     }
 
     .sticker {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 9px 13px;
+      gap: 7px;
+      padding: 7px 11px;
       border-radius: 999px;
       background: white;
       border: 2px solid #d6e9db;
-      box-shadow: 2px 4px 0 #075c3b20;
+      box-shadow: 2px 3px 0 #075c3b20;
       font-weight: bold;
       color: var(--green);
+      font-size: 14px;
     }
 
-    .sticker span { font-size: 20px; }
+    .sticker span { font-size: 18px; }
 
     .flash {
       border-radius: 9px;
@@ -219,31 +231,34 @@
       gap: 12px;
     }
 
+    /* SMALLER STATISTICS SECTION */
     .stats {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
-      margin-bottom: 24px;
+      gap: 12px;
+      max-width: 1000px;
+      width: 100%;
+      margin: 0 auto 20px;
     }
 
     .stat {
-      background: #eef7f0;
+      background: rgba(238,247,240,.95);
       border: 1px solid #d5e8da;
       border-radius: 12px;
-      padding: 16px;
+      padding: 12px 14px;
     }
 
     .stat strong {
       display: block;
       color: var(--green);
-      font-size: 27px;
-      margin-top: 6px;
+      font-size: 23px;
+      margin-top: 4px;
     }
 
     .report-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
+      gap: 18px;
     }
 
     .report-card {
@@ -306,7 +321,7 @@
       margin-top: 14px;
     }
 
-    .empty-state { text-align: center; padding: 35px 20px; }
+    .empty-state { text-align: center; padding: 28px 18px; }
 
     .detail-photo {
       max-width: 100%;
@@ -350,24 +365,56 @@
 
     .site-footer {
       text-align: center;
-      padding: 25px 15px;
+      padding: 20px 15px;
       color: white;
-      background: rgba(3,63,42,.96);
+      background: rgba(3,63,42,.94);
     }
 
+    .site-footer p { margin: 6px 0; }
+
+    /* TABLET AND MOBILE */
     @media (max-width: 800px) {
-      .filter-grid, .form-grid, .detail-layout { grid-template-columns: 1fr; }
+      .filter-grid, .form-grid, .detail-layout {
+        grid-template-columns: 1fr;
+      }
+
       .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
       .brand h1 { font-size: 20px; }
-      .container, .hero { width: 94%; }
+
+      .container { width: 94%; }
+
+      .hero {
+        width: calc(100% - 24px);
+        padding: 22px 16px;
+      }
     }
 
     @media (max-width: 480px) {
-      .stats { grid-template-columns: 1fr 1fr; }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+      .stat { padding: 10px; }
+
+      .stat strong { font-size: 20px; }
+
       .panel { padding: 17px; }
-      .site-header { padding: 15px 4%; }
+
+      .site-header { padding: 13px 4%; }
+
+      .brand img {
+        width: 44px;
+        height: 44px;
+      }
+
+      nav a {
+        font-size: 12px;
+        padding: 8px 9px;
+      }
+
+      .hero h2 { font-size: 25px; }
     }
   </style>
+
   {% block head %}{% endblock %}
 </head>
 
