@@ -96,29 +96,32 @@
       color: var(--green);
     }
 
-    /* GENERAL CONTENT */
+    /* MAIN CONTENT WIDTH */
     .container {
       width: 92%;
       max-width: 1080px;
       margin: 18px auto 26px;
     }
 
+    /* GENERAL PANELS */
     .panel {
+      width: 100%;
+      max-width: 100%;
+      margin: 0 0 18px;
+      padding: 22px;
       background: rgba(255, 255, 255, .91);
-      border-radius: 14px;
-      padding: 18px;
+      border-radius: 16px;
       box-shadow: 0 6px 20px #0002;
-      margin-bottom: 16px;
     }
 
-    /* COMPACT WELCOME PANEL */
+    /* WELCOME BOX — SAME WIDTH AS MAIN CONTENT */
     .hero {
-      max-width: 950px;
-      width: calc(100% - 48px);
-      margin: 18px auto 14px;
+      width: 92%;
+      max-width: 1080px;
+      margin: 18px auto;
+      padding: 24px 22px;
       background: rgba(229, 244, 233, .90);
       border-radius: 16px;
-      padding: 22px 18px;
       text-align: center;
       box-shadow: 0 6px 20px #0002;
     }
@@ -482,8 +485,12 @@
       }
 
       .hero {
-        width: calc(100% - 24px);
-        padding: 18px 14px;
+        width: 94%;
+        padding: 20px 16px;
+      }
+
+      .panel {
+        padding: 16px;
       }
 
       .report-grid {
@@ -496,7 +503,7 @@
       .stats {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 8px;
-        width: calc(100% - 24px);
+        width: 94%;
       }
 
       .stat {
