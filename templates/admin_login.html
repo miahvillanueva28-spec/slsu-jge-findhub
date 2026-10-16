@@ -1,13 +1,16 @@
 {% extends "base.html" %}
-
-{% block title %}Admin Login | SLSU JGE FindHub{% endblock %}
+{% block title %}Admin Login | FindHub{% endblock %}
 
 {% block content %}
-<section class="panel" style="max-width:520px; margin:30px auto;">
-  <h1>Administrator Login</h1>
+<section class="panel" style="max-width:560px;margin:auto">
+  <div class="sticker-row">
+    <span class="sticker"><span>🔐</span>Admin only</span>
+    <span class="sticker"><span>🛠️</span>Manage reports</span>
+  </div>
 
-  <p class="muted">
-    Sign in to manage reports and claims.
+  <h2>🔐 Administrator Login</h2>
+  <p class="help">
+    Sign in to review reports, update item statuses, and verify claims.
   </p>
 
   <form method="POST">
@@ -28,10 +31,15 @@
       required
     >
 
-    <div class="actions">
+    <div class="card-actions">
       <button type="submit">Log In</button>
-      <a class="btn secondary" href="{{ url_for('home') }}">Cancel</a>
+      <a class="button secondary" href="{{ url_for('home') }}">Back Home</a>
     </div>
   </form>
+
+  <p class="help">
+    Configure ADMIN_USERNAME, ADMIN_PASSWORD, and SECRET_KEY in your
+    Render Environment Variables. Never store admin credentials in source code.
+  </p>
 </section>
 {% endblock %}
