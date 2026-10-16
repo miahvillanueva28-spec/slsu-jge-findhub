@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Report an Item | SLSU JGE FindHub{% endblock %}
+
+{% block content %}
+<section class="panel">
+  <h1>Report a Lost or Found Item</h1>
+
+  <p class="muted">
+    Please provide accurate details to help the campus community.
+  </p>
+
+  <form method="POST" enctype="multipart/form-data">
+    <div class="grid">
+      <div>
+        <label for="report_type">Report Type *</label>
+        <select id="report_type" name="report_type" required>
+          <option value="">Select type</option>
+          <option value="Lost">Lost Item</option>
+          <option value="Found">Found Item</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="item_name">Item Name *</label>
+        <input id="item_name" name="item_name" required>
+      </div>
+
+      <div>
+        <label for="category">Category *</label>
+        <select id="category" name="category" required>
+          <option value="">Select category</option>
+          {% for item in categories|default([]) %}
+            <option value="{{ item }}">{{ item }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <label for="incident_date">Date Lost or Found *</label>
+        <input
+          id="incident_date"
+          name="incident_date"
+          type="date"
+          required
+        >
+      </div>
+
+      <div>
+        <label for="location">Location *</label>
+        <input
+          id="location"
+          name="location"
+          placeholder="Building or campus area"
+          required
+        >
+      </div>
+
+      <div>
+        <label for="contact_name">Your Name *</label>
+        <input id="contact_name" name="contact_name" required>
+      </div>
+
+      <div>
+        <label for="contact">Contact Information *</label>
+        <input
+          id="contact"
+          name="contact"
+          placeholder="Email or phone number"
+          required
+        >
+      </div>
+
+      <div>
+        <label for="photo">Item Photo (Optional)</label>
+        <input
+          id="photo"
+          name="photo"
+          type="file"
+          accept="image/*"
+        >
+        <small class="muted">Maximum upload size: 5 MB.</small>
+      </div>
+    </div>
+
+    <label for="description">Description *</label>
+    <textarea
+      id="description"
+      name="description"
+      placeholder="Describe the item and any identifying features."
+      required
+    ></textarea>
+
+    <label>
+      <input
+        style="width:auto"
+        type="checkbox"
+        name="contact_public"
+        value="yes"
+      >
+      Allow my contact information to be displayed publicly
+    </label>
+
+    <div class="actions">
+      <button type="submit">Submit Report</button>
+      <a class="btn secondary" href="{{ url_for('home') }}">Cancel</a>
+    </div>
+  </form>
+</section>
+{% endblock %}
