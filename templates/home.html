@@ -1,479 +1,420 @@
-```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SLSU JGE FindHub</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}SLSU JGE FindHub{% endblock %}</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+  <style>
+    :root {
+      --green: #075c3b;
+      --deep: #063f2a;
+      --bright: #087647;
+      --ink: #24332b;
+    }
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f4f7f5;
-            color: #24332b;
-        }
+    * { box-sizing: border-box; }
 
-        header {
-            background: #075c3b;
-            color: white;
-            padding: 22px 6%;
-        }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(3,35,23,.68), rgba(3,35,23,.72)),
+        url("{{ campus_photo }}") center/cover fixed no-repeat;
+    }
 
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
+    a { color: var(--green); }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
+    .site-header {
+      background: rgba(5,75,47,.96);
+      color: white;
+      padding: 18px 5%;
+      box-shadow: 0 4px 16px #0003;
+    }
 
-        .brand img {
-            width: 58px;
-            height: 58px;
-            object-fit: contain;
-            background: white;
-            border-radius: 50%;
-            padding: 4px;
-        }
+    .header-inner {
+      max-width: 1250px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
 
-        header h1 {
-            margin: 0 0 6px;
-            font-size: 25px;
-        }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
 
-        header p {
-            margin: 0;
-            font-size: 14px;
-        }
+    .brand img {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: white;
+      padding: 4px;
+    }
 
-        nav {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
+    .brand h1 { margin: 0 0 5px; font-size: 24px; }
+    .brand p { margin: 0; font-size: 13px; }
 
-        nav a, .button {
-            display: inline-block;
-            padding: 10px 15px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 14px;
-        }
+    nav { display: flex; gap: 9px; flex-wrap: wrap; }
 
-        nav a {
-            color: white;
-            border: 1px solid rgba(255,255,255,.6);
-        }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 14px;
+      padding: 10px 13px;
+      border: 1px solid #ffffff8c;
+      border-radius: 8px;
+    }
 
-        nav a:hover {
-            background: white;
-            color: #075c3b;
-        }
+    nav a:hover { background: white; color: var(--green); }
 
-        .hero {
-            padding: 55px 6%;
-            background: #e0efe5;
-            text-align: center;
-        }
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 30px auto 45px;
+    }
 
-        .hero h2 {
-            margin: 0 0 12px;
-            color: #075c3b;
-            font-size: 34px;
-        }
+    .panel {
+      background: #fffffff5;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 28px #0003;
+      margin-bottom: 24px;
+    }
 
-        .hero p {
-            max-width: 650px;
-            margin: 0 auto 24px;
-            line-height: 1.7;
-        }
+    .hero {
+      max-width: 1250px;
+      width: 90%;
+      margin: 30px auto 24px;
+      background: #e5f4e9f5;
+      border-radius: 18px;
+      padding: 42px 24px;
+      text-align: center;
+      box-shadow: 0 8px 28px #0003;
+    }
 
-        .button {
-            background: #087647;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
+    .hero h2 {
+      color: var(--green);
+      font-size: clamp(28px, 4vw, 42px);
+      margin: 0 0 12px;
+    }
 
-        .button:hover {
-            background: #064d32;
-        }
+    .hero p {
+      max-width: 720px;
+      line-height: 1.7;
+      margin: 0 auto 20px;
+    }
 
-        .button.secondary {
-            background: #64756a;
-        }
+    .button, button {
+      display: inline-block;
+      border: 0;
+      border-radius: 8px;
+      background: var(--bright);
+      color: white;
+      padding: 11px 16px;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
 
-        .container {
-            width: 88%;
-            max-width: 1200px;
-            margin: 35px auto;
-        }
+    .button:hover, button:hover {
+      background: var(--deep);
+      color: white;
+    }
 
-        .flash {
-            padding: 13px 16px;
-            margin-bottom: 12px;
-            border-radius: 6px;
-            background: #d8f3df;
-            color: #155c2e;
-        }
+    .secondary { background: #66766c !important; }
+    .danger { background: #b42332 !important; }
+    .small { padding: 8px 10px; font-size: 12px; }
 
-        .flash.error, .flash.danger {
-            background: #f8d7da;
-            color: #842029;
-        }
+    .sticker-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 0 0 20px;
+    }
 
-        .search-panel {
-            background: white;
-            padding: 22px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,.06);
-            margin-bottom: 30px;
-        }
+    .sticker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      background: white;
+      border: 2px solid #d6e9db;
+      box-shadow: 2px 4px 0 #075c3b20;
+      font-weight: bold;
+      color: var(--green);
+    }
 
-        .search-panel h3 {
-            margin-top: 0;
-        }
+    .sticker span { font-size: 20px; }
 
-        .filters {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 14px;
-        }
+    .flash {
+      border-radius: 9px;
+      padding: 13px 16px;
+      margin: 0 0 12px;
+      background: #d8f3df;
+      color: #155c2e;
+      border-left: 5px solid #198754;
+    }
 
-        .filters input,
-        .filters select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccd5cf;
-            border-radius: 6px;
-            background: white;
-            font-size: 14px;
-        }
+    .flash.warning {
+      background: #fff0c2;
+      color: #795500;
+      border-color: #d49b00;
+    }
 
-        .section-heading {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 18px;
-        }
+    .flash.danger, .flash.error {
+      background: #f8d7da;
+      color: #842029;
+      border-color: #b42332;
+    }
 
-        .section-heading h2 {
-            margin: 0;
-            color: #075c3b;
-        }
+    h2, h3 { color: var(--green); }
 
-        .report-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 22px;
-        }
+    label {
+      display: block;
+      font-weight: bold;
+      margin: 12px 0 6px;
+    }
 
-        .report-card {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,.07);
-            display: flex;
-            flex-direction: column;
-        }
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #c8d5cc;
+      border-radius: 8px;
+      font: inherit;
+      background: white;
+      color: #24332b;
+    }
 
-        .report-photo {
-            width: 100%;
-            height: 210px;
-            object-fit: cover;
-            background: #e8ece9;
-        }
+    textarea { min-height: 115px; resize: vertical; }
 
-        .no-photo {
-            height: 160px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #e8ece9;
-            color: #68766d;
-        }
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 18px;
+    }
 
-        .report-content {
-            padding: 18px;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
+    .full { grid-column: 1 / -1; }
 
-        .report-content h3 {
-            margin: 10px 0;
-            color: #075c3b;
-        }
+    .help {
+      color: #5c6b61;
+      font-size: 13px;
+      line-height: 1.5;
+    }
 
-        .report-content p {
-            line-height: 1.5;
-            margin: 6px 0;
-            overflow-wrap: anywhere;
-        }
+    .filter-grid {
+      display: grid;
+      grid-template-columns: 2fr repeat(3, minmax(140px, 1fr));
+      gap: 12px;
+    }
 
-        .tag {
-            display: inline-block;
-            align-self: flex-start;
-            padding: 6px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            background: #d8f3df;
-            color: #075c3b;
-        }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
 
-        .tag.found {
-            background: #dbeafe;
-            color: #1d4ed8;
-        }
+    .stat {
+      background: #eef7f0;
+      border: 1px solid #d5e8da;
+      border-radius: 12px;
+      padding: 16px;
+    }
 
-        .tag.status {
-            background: #fff0c2;
-            color: #795500;
-        }
+    .stat strong {
+      display: block;
+      color: var(--green);
+      font-size: 27px;
+      margin-top: 6px;
+    }
 
-        .report-content .button {
-            align-self: flex-start;
-            margin-top: auto;
-            padding-top: 10px;
-            margin-top: 15px;
-        }
+    .report-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
 
-        .empty-state {
-            text-align: center;
-            background: white;
-            padding: 40px 20px;
-            border-radius: 10px;
-            color: #657168;
-        }
+    .report-card {
+      overflow: hidden;
+      border-radius: 14px;
+      background: #fffffffA;
+      box-shadow: 0 7px 20px #0003;
+      display: flex;
+      flex-direction: column;
+    }
 
-        footer {
-            margin-top: 50px;
-            padding: 25px 6%;
-            text-align: center;
-            background: #063f2a;
-            color: white;
-            font-size: 14px;
-        }
+    .report-photo, .placeholder-photo {
+      width: 100%;
+      height: 205px;
+      object-fit: cover;
+      background: #e8eee9;
+    }
 
-        @media (max-width: 600px) {
-            .hero h2 {
-                font-size: 27px;
-            }
+    .placeholder-photo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 54px;
+    }
 
-            .container {
-                width: 92%;
-            }
+    .report-content {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
 
-            header h1 {
-                font-size: 21px;
-            }
-        }
-    </style>
+    .report-content h3 { margin: 11px 0; }
+
+    .report-content p {
+      line-height: 1.5;
+      margin: 5px 0;
+      overflow-wrap: anywhere;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-self: flex-start;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+      background: #d8f3df;
+      color: #075c3b;
+    }
+
+    .found { background: #dbeafe; color: #1d4ed8; }
+    .pending { background: #fff0c2; color: #795500; }
+    .returned { background: #e5e7eb; color: #374151; }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .empty-state { text-align: center; padding: 35px 20px; }
+
+    .detail-photo {
+      max-width: 100%;
+      max-height: 430px;
+      object-fit: contain;
+      border-radius: 12px;
+      background: #eef2ee;
+    }
+
+    .detail-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 26px;
+    }
+
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid #e1e8e3;
+      vertical-align: top;
+    }
+
+    th { background: #eaf4ed; color: var(--green); }
+    td form { min-width: 155px; }
+
+    .inline-form {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .inline-form select { min-width: 130px; }
+
+    .site-footer {
+      text-align: center;
+      padding: 25px 15px;
+      color: white;
+      background: rgba(3,63,42,.96);
+    }
+
+    @media (max-width: 800px) {
+      .filter-grid, .form-grid, .detail-layout { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .brand h1 { font-size: 20px; }
+      .container, .hero { width: 94%; }
+    }
+
+    @media (max-width: 480px) {
+      .stats { grid-template-columns: 1fr 1fr; }
+      .panel { padding: 17px; }
+      .site-header { padding: 15px 4%; }
+    }
+  </style>
+  {% block head %}{% endblock %}
 </head>
 
 <body>
-
-<header>
-    <div class="header-content">
-        <div class="brand">
-            {% if campus_logo %}
-                <img src="{{ campus_logo }}" alt="SLSU JGE Logo">
-            {% endif %}
-
-            <div>
-                <h1>SLSU JGE FindHub</h1>
-                <p>Lost and Found Information System</p>
-            </div>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <img src="{{ campus_logo }}" alt="SLSU JGE logo"
+             onerror="this.style.display='none'">
+        <div>
+          <h1>SLSU JGE FindHub</h1>
+          <p>Lost and Found Information System</p>
         </div>
+      </div>
 
-        <nav>
-            <a href="{{ url_for('home') }}">Home</a>
-            <a href="{{ url_for('new_report') }}">Submit a Report</a>
-
-            {% if admin_logged_in %}
-                <a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a>
-                <a href="{{ url_for('admin_logout') }}">Log Out</a>
-            {% else %}
-                <a href="{{ url_for('admin_login') }}">Admin Login</a>
-            {% endif %}
-        </nav>
-    </div>
-</header>
-
-<section class="hero">
-    <h2>Lost Something? Found Something?</h2>
-
-    <p>
-        Welcome to SLSU JGE FindHub! Search for lost belongings,
-        report found items, and help reunite items with their rightful owners
-        within the campus community.
-    </p>
-
-    <a class="button" href="{{ url_for('new_report') }}">
-        + Submit a Report
-    </a>
-</section>
-
-<main class="container">
-
-    <!-- Flash messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="flash {{ category }}">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
-
-    <!-- Search and filters -->
-    <section class="search-panel">
-        <h3>Find an Item</h3>
-
-        <form method="GET" action="{{ url_for('home') }}">
-            <div class="filters">
-                <input
-                    type="text"
-                    name="q"
-                    placeholder="Search item name or keywords..."
-                    value="{{ request.args.get('q', '') }}"
-                >
-
-                <select name="type">
-                    <option value="">All Reports</option>
-                    <option value="Lost"
-                        {% if request.args.get('type') == 'Lost' %}selected{% endif %}>
-                        Lost Items
-                    </option>
-                    <option value="Found"
-                        {% if request.args.get('type') == 'Found' %}selected{% endif %}>
-                        Found Items
-                    </option>
-                </select>
-
-                <select name="category">
-                    <option value="">All Categories</option>
-                    {% for category in categories|default([]) %}
-                        <option value="{{ category }}"
-                            {% if request.args.get('category') == category %}selected{% endif %}>
-                            {{ category }}
-                        </option>
-                    {% endfor %}
-                </select>
-
-                <select name="status">
-                    <option value="">All Statuses</option>
-                    {% for status_option in ['Open', 'Claimed', 'Returned', 'Closed'] %}
-                        <option value="{{ status_option }}"
-                            {% if request.args.get('status') == status_option %}selected{% endif %}>
-                            {{ status_option }}
-                        </option>
-                    {% endfor %}
-                </select>
-
-                <button class="button" type="submit">Search</button>
-                <a class="button secondary" href="{{ url_for('home') }}">Clear</a>
-            </div>
-        </form>
-    </section>
-
-    <!-- Reports -->
-    <section>
-        <div class="section-heading">
-            <h2>Recent Lost & Found Reports</h2>
-            <a class="button" href="{{ url_for('new_report') }}">+ New Report</a>
-        </div>
-
-        {% if reports %}
-            <div class="report-grid">
-                {% for report in reports %}
-                    <article class="report-card">
-
-                        {% if report.photo %}
-                            <img
-                                class="report-photo"
-                                src="{{ url_for('uploaded_photo', filename=report.photo) }}"
-                                alt="{{ report.item_name }}"
-                            >
-                        {% else %}
-                            <div class="no-photo">No photo available</div>
-                        {% endif %}
-
-                        <div class="report-content">
-
-                            {% if report.report_type == 'Found' %}
-                                <span class="tag found">FOUND ITEM</span>
-                            {% else %}
-                                <span class="tag">LOST ITEM</span>
-                            {% endif %}
-
-                            <h3>{{ report.item_name }}</h3>
-
-                            <p>
-                                <strong>Category:</strong>
-                                {{ report.category }}
-                            </p>
-
-                            <p>
-                                <strong>Location:</strong>
-                                {{ report.location }}
-                            </p>
-
-                            <p>
-                                <strong>Date:</strong>
-                                {{ report.incident_date }}
-                            </p>
-
-                            <p>
-                                <strong>Status:</strong>
-                                <span class="tag status">{{ report.status }}</span>
-                            </p>
-
-                            <a
-                                class="button"
-                                href="{{ url_for('report_detail', report_id=report.id) }}">
-                                View Details
-                            </a>
-                        </div>
-                    </article>
-                {% endfor %}
-            </div>
+      <nav>
+        <a href="{{ url_for('home') }}">🏠 Home</a>
+        <a href="{{ url_for('new_report') }}">📝 Submit Report</a>
+        {% if admin_logged_in %}
+          <a href="{{ url_for('admin_dashboard') }}">🛠️ Admin Dashboard</a>
+          <a href="{{ url_for('admin_logout') }}">🚪 Log Out</a>
         {% else %}
-            <div class="empty-state">
-                <h3>No reports found</h3>
-                <p>
-                    No items match your search. Try different filters
-                    or submit a new lost-and-found report.
-                </p>
-                <a class="button" href="{{ url_for('new_report') }}">
-                    Submit a Report
-                </a>
-            </div>
+          <a href="{{ url_for('admin_login') }}">🔐 Admin Login</a>
         {% endif %}
-    </section>
+      </nav>
+    </div>
+  </header>
 
-</main>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="container" style="margin-bottom:0">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
 
-<footer>
-    <p>&copy; {{ today.year if today is defined and today.year is defined else 2026 }}
-       SLSU JGE FindHub. Lost and Found Information System.</p>
-    <p>Helping the campus community find what matters.</p>
-</footer>
+  {% block hero %}{% endblock %}
 
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <p>🎒 🔑 📱 🪪 &nbsp; Helping the SLSU JGE community find what matters.</p>
+    <p>&copy; {{ today.year }} SLSU JGE FindHub</p>
+  </footer>
 </body>
 </html>
-```
