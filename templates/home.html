@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SLSU JGE FindHub</title>
+    <style>
+        :root {
+            --green: #075b40;
+            --gold: #f4c542;
+            --cream: #fffdf5;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #19372d;
+            background: var(--cream);
+        }
+        header {
+            background: var(--green);
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        header img { width: 65px; height: 65px; object-fit: contain; }
+        header h1 { margin: 0 0 5px; font-size: 1.5rem; }
+        header p { margin: 0; }
+        .hero {
+            padding: 70px 8%;
+            color: white;
+            background:
+                linear-gradient(#003d2bc9, #003d2bc9),
+                url("https://www.slsu.edu.ph/wp-content/uploads/2023/05/Campuses/SLSU%20JGE%20Tagkawayan/JGE%20bldg.jpg")
+                center/cover;
+        }
+        .hero h2 { font-size: clamp(2rem, 5vw, 3.4rem); margin: 0 0 12px; }
+        .hero p { max-width: 650px; line-height: 1.7; }
+        .button {
+            display: inline-block;
+            background: var(--gold);
+            color: #19372d;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin: 8px 8px 0 0;
+        }
+        main { max-width: 1100px; margin: 35px auto; padding: 0 18px; }
+        .stats { display: flex; gap: 15px; flex-wrap: wrap; }
+        .stat, .report {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #e1eae3;
+            box-shadow: 0 5px 18px #173c2910;
+        }
+        .stat { flex: 1; min-width: 150px; }
+        .stat strong { display: block; color: var(--green); font-size: 1.8rem; }
+        .reports { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+        .report h3 { color: var(--green); }
+        .report p { line-height: 1.5; overflow-wrap: anywhere; }
+        footer { text-align: center; padding: 25px; color: #61746a; }
+        .muted { color: #68786e; }
+    </style>
+</head>
+<body>
+<header>
+    <img src="{{ campus_logo }}" alt="SLSU JGE logo">
+    <div>
+        <h1>SLSU JGE FindHub</h1>
+        <p>Southern Luzon State University — Tagkawayan Campus</p>
+    </div>
+</header>
+
+<section class="hero">
+    <h2>Lost something? Let's find it! 🌱</h2>
+    <p>
+        A friendly campus lost-and-found board. Browse reported items,
+        report something missing, or help return a found belonging
+        to its rightful owner.
+    </p>
+    <a class="button" href="{{ url_for('new_report') }}">＋ Submit a Report</a>
+    <a class="button" href="#reports">Browse Items</a>
+</section>
+
+<main>
+    <div class="stats">
+        <div class="stat">
+            <span>Open reports</span>
+            <strong>{{ total_open }}</strong>
+        </div>
+        <div class="stat">
+            <span>Items found</span>
+            <strong>{{ total_found }}</strong>
+        </div>
+        <div class="stat">
+            <span>Items lost</span>
+            <strong>{{ total_lost }}</strong>
+        </div>
+    </div>
+
+    <section id="reports">
+        <h2>Campus Lost & Found</h2>
+        <p class="muted">Search the board for a reported belonging.</p>
+
+        <form method="get" action="{{ url_for('home') }}">
+            <input name="q" value="{{ q }}" placeholder="Search items or locations">
+            <select name="type">
+                <option value="">All reports</option>
+                <option value="Lost" {% if kind == 'Lost' %}selected{% endif %}>Lost</option>
+                <option value="Found" {% if kind == 'Found' %}selected{% endif %}>Found</option>
+            </select>
+            <select name="category">
+                <option value="">All categories</option>
+                {% for item_category in categories %}
+                <option value="{{ item_category }}" {% if category == item_category %}selected{% endif %}>
+                    {{ item_category }}
+                </option>
+                {% endfor %}
+            </select>
+            <button class="button" type="submit">Search</button>
+        </form>
+
+        <div class="reports">
+            {% for report in reports %}
+            <article class="report">
+                {% if report.photo %}
+                <img
+                    src="{{ url_for('uploaded_photo', filename=report.photo) }}"
+                    alt="Photo of {{ report.item_name }}"
+                    style="width:100%;max-height:220px;object-fit:cover;border-radius:10px"
+                >
+                {% endif %}
+                <p><strong>{{ report.report_type }}</strong> · {{ report.category }}</p>
+                <h3>{{ report.item_name }}</h3>
+                <p>{{ report.description|truncate(180) }}</p>
+                <p>📍 {{ report.location }}</p>
+                <p>📅 {{ report.incident_date }}</p>
+                <p>Status: <strong>{{ report.status }}</strong></p>
+                <a class="button" href="{{ url_for('report_detail', report_id=report.id) }}">View Details</a>
+            </article>
+            {% else %}
+            <p>No matching reports yet. Try another search or submit a report.</p>
+            {% endfor %}
+        </div>
+    </section>
+</main>
+
+<footer>
+    SLSU JGE FindHub · Built to support a caring campus community 💚💛
+</footer>
+</body>
+</html>
