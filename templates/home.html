@@ -1,20 +1,23 @@
+
 {% extends "base.html" %}
+
 {% block title %}Home | SLSU JGE FindHub{% endblock %}
 
 {% block hero %}
 <section class="hero">
   <div class="sticker-row">
-    <span class="sticker"><span>🎒</span>Bags</span>
-    <span class="sticker"><span>🔑</span>Keys</span>
-    <span class="sticker"><span>📱</span>Gadgets</span>
-    <span class="sticker"><span>🪪</span>School IDs</span>
+    <span class="sticker"><span>🎒</span> Bags</span>
+    <span class="sticker"><span>🔑</span> Keys</span>
+    <span class="sticker"><span>📱</span> Gadgets</span>
+    <span class="sticker"><span>🪪</span> School IDs</span>
   </div>
 
-  <h2>Lost Something? Found Something?</h2>
+  <h2>Lost Something? Found Something? 🌱</h2>
+
   <p>
-    Welcome to SLSU JGE FindHub! Report lost belongings, share found
-    items, and help reunite belongings with their rightful owners
-    in the campus community.
+    Welcome to SLSU JGE FindHub! Report lost belongings,
+    share found items, and help reunite belongings with
+    their rightful owners in the campus community.
   </p>
 
   <a class="button" href="{{ url_for('new_report') }}">
@@ -24,68 +27,78 @@
 {% endblock %}
 
 {% block content %}
-<section class="panel">
-  <div class="stats">
-    <div class="stat">
-      📌 Active reports
-      <strong>{{ total_open }}</strong>
-    </div>
-    <div class="stat">
-      🎒 Lost items
-      <strong>{{ total_lost }}</strong>
-    </div>
-    <div class="stat">
-      🔎 Found items
-      <strong>{{ total_found }}</strong>
-    </div>
-    <div class="stat">
-      🤝 Community
-      <strong>FindHub</strong>
-    </div>
+
+<!-- Four equal-sized statistics boxes -->
+<section class="stats">
+  <div class="stat">
+    <span>📌 Active reports</span>
+    <strong>{{ active_count|default(0) }}</strong>
   </div>
 
-  <h2>🔍 Find an Item</h2>
+  <div class="stat">
+    <span>🎒 Lost items</span>
+    <strong>{{ lost_count|default(0) }}</strong>
+  </div>
+
+  <div class="stat">
+    <span>🔎 Found items</span>
+    <strong>{{ found_count|default(0) }}</strong>
+  </div>
+
+  <div class="stat">
+    <span>💛 Community</span>
+    <strong>FindHub</strong>
+  </div>
+</section>
+
+<!-- Separate, smaller search box -->
+<section class="panel">
+  <h2>🔎 Find an Item</h2>
 
   <form method="GET" action="{{ url_for('home') }}">
     <div class="filter-grid">
       <input
-        type="search"
+        type="text"
         name="q"
         placeholder="Search item, description, or location..."
-        value="{{ q }}"
+        value="{{ request.args.get('q', '') }}"
       >
 
-      <select name="type">
+      <select name="report_type">
         <option value="">All report types</option>
-        <option value="Lost" {% if kind == 'Lost' %}selected{% endif %}>
-          🎒 Lost
+        <option value="Lost"
+          {% if request.args.get('report_type') == 'Lost' %}selected{% endif %}>
+          Lost
         </option>
-        <option value="Found" {% if kind == 'Found' %}selected{% endif %}>
-          ✨ Found
+        <option value="Found"
+          {% if request.args.get('report_type') == 'Found' %}selected{% endif %}>
+          Found
         </option>
       </select>
 
       <select name="category">
         <option value="">All categories</option>
-        {% for c in categories %}
-          <option value="{{ c }}" {% if category == c %}selected{% endif %}>
-            {{ c }}
+        {% for category in categories|default([], true) %}
+          <option value="{{ category }}"
+            {% if request.args.get('category') == category %}selected{% endif %}>
+            {{ category }}
           </option>
         {% endfor %}
       </select>
 
       <select name="status">
         <option value="">All statuses</option>
-        {% for s in ['Open', 'Pending Claim', 'Returned'] %}
-          <option value="{{ s }}" {% if status == s %}selected{% endif %}>
-            {{ s }}
+        {% for status in statuses|default([], true) %}
+          <option value="{{ status }}"
+            {% if request.args.get('status') == status %}selected{% endif %}>
+            {{ status }}
           </option>
         {% endfor %}
       </select>
     </div>
 
     <div class="card-actions">
-      <button type="submit">Search Reports</button>
+      <button type="submit">🔎 Search Reports</button>
       <a class="button secondary" href="{{ url_for('home') }}">
         Clear Filters
       </a>
@@ -93,81 +106,72 @@
   </form>
 </section>
 
-<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 18px">
-  <h2 style="color:white;text-shadow:0 2px 5px #0008;margin:0">
-    📌 Recent Lost &amp; Found Reports
-  </h2>
-  <a class="button" href="{{ url_for('new_report') }}">＋ New Report</a>
-</div>
-
-{% if reports %}
-  <div class="report-grid">
-    {% for report in reports %}
-      <article class="report-card">
-        {% if report.photo %}
-          <img
-            class="report-photo"
-            src="{{ url_for('uploaded_photo', filename=report.photo) }}"
-            alt="{{ report.item_name }}"
-          >
-        {% else %}
-          <div class="placeholder-photo">
-            {% if report.category == 'Keys' %}
-              🔑
-            {% elif report.category == 'Phone / Gadget' %}
-              📱
-            {% elif report.category == 'ID / School Card' %}
-              🪪
-            {% elif report.category == 'Bag' %}
-              🎒
-            {% elif report.category == 'Wallet / Money' %}
-              👛
-            {% elif report.category == 'Books / Notes' %}
-              📚
-            {% elif report.category == 'Clothing' %}
-              👕
-            {% else %}
-              🔎
-            {% endif %}
-          </div>
-        {% endif %}
-
-        <div class="report-content">
-          <span class="tag {% if report.report_type == 'Found' %}found{% endif %}">
-            {% if report.report_type == 'Found' %}
-              ✨ FOUND ITEM
-            {% else %}
-              🔎 LOST ITEM
-            {% endif %}
-          </span>
-
-          <h3>{{ report.item_name }}</h3>
-          <p><strong>Category:</strong> {{ report.category }}</p>
-          <p><strong>Location:</strong> {{ report.location }}</p>
-          <p><strong>Date:</strong> {{ report.incident_date }}</p>
-
-          <p>
-            <strong>Status:</strong>
-            <span class="tag {% if report.status == 'Pending Claim' %}pending{% elif report.status == 'Returned' %}returned{% endif %}">
-              {{ report.status }}
-            </span>
-          </p>
-
-          <div class="card-actions">
-            <a class="button" href="{{ url_for('report_detail', report_id=report.id) }}">
-              View Details →
-            </a>
-          </div>
-        </div>
-      </article>
-    {% endfor %}
+<!-- Separate reports section; no large outer panel -->
+<section>
+  <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin: 8px 0 12px;">
+    <h2 style="margin:0;">📌 Recent Lost &amp; Found Reports</h2>
+    <a class="button small" href="{{ url_for('new_report') }}">+ New Report</a>
   </div>
-{% else %}
-  <section class="panel empty-state">
-    <div style="font-size:48px">🕵️‍♀️</div>
-    <h2>No reports found</h2>
-    <p>No items match your search. Try another filter or create a report.</p>
-    <a class="button" href="{{ url_for('new_report') }}">Submit a Report</a>
-  </section>
-{% endif %}
+
+  {% if reports %}
+    <div class="report-grid">
+      {% for report in reports %}
+        <article class="report-card">
+          {% if report.photo %}
+            <img
+              class="report-photo"
+              src="{{ url_for('uploaded_photo', filename=report.photo) }}"
+              alt="{{ report.item_name }}"
+            >
+          {% else %}
+            <div class="placeholder-photo">
+              {% if report.report_type == 'Lost' %}
+                🎒
+              {% else %}
+                🔎
+              {% endif %}
+            </div>
+          {% endif %}
+
+          <div class="report-content">
+            <span class="tag {% if report.report_type == 'Found' %}found{% endif %}">
+              {{ report.report_type }}
+            </span>
+
+            <h3>{{ report.item_name }}</h3>
+
+            <p><strong>Category:</strong> {{ report.category }}</p>
+            <p><strong>Location:</strong> {{ report.location }}</p>
+
+            {% if report.incident_date %}
+              <p><strong>Date:</strong> {{ report.incident_date }}</p>
+            {% endif %}
+
+            <p>
+              <strong>Status:</strong>
+              <span class="tag {% if report.status == 'Pending Claim' %}pending{% elif report.status in ['Returned', 'Archived'] %}returned{% endif %}">
+                {{ report.status }}
+              </span>
+            </p>
+
+            <div class="card-actions" style="margin-top:auto;">
+              <a class="button small"
+                 href="{{ url_for('report_detail', report_id=report.id) }}">
+                View Details
+              </a>
+            </div>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <div style="font-size:38px;">🕵️</div>
+      <h3>No reports found</h3>
+      <p>No items match your search. Try another filter or create a report.</p>
+      <a class="button" href="{{ url_for('new_report') }}">Submit a Report</a>
+    </div>
+  {% endif %}
+</section>
+
 {% endblock %}
