@@ -11,7 +11,12 @@
       --green: #075c3b;
       --deep: #063f2a;
       --bright: #087647;
-      --ink: #24332b;
+      --ink: #20352c;
+
+      /* More transparent panels */
+      --panel-bg: rgba(255, 255, 255, 0.64);
+      --hero-bg: rgba(229, 244, 233, 0.66);
+      --border: rgba(255, 255, 255, 0.40);
     }
 
     * {
@@ -28,11 +33,11 @@
       font-family: Arial, sans-serif;
       color: var(--ink);
 
-      /* Campus building background */
+      /* Campus background is more visible */
       background:
         linear-gradient(
-          rgba(3, 35, 23, 0.32),
-          rgba(3, 35, 23, 0.40)
+          rgba(3, 35, 23, 0.30),
+          rgba(3, 35, 23, 0.36)
         ),
         url("{{ campus_photo }}") center center / cover fixed no-repeat;
     }
@@ -41,19 +46,17 @@
       color: var(--green);
     }
 
-    /* =========================
-       HEADER
-    ========================= */
-
+    /* HEADER */
     .site-header {
-      background: rgba(5, 55, 37, 0.91);
+      background: rgba(5, 55, 37, 0.88);
       color: white;
-      padding: 12px 5%;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.16);
+      padding: 12px 4%;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.18);
+      backdrop-filter: blur(5px);
     }
 
     .header-inner {
-      max-width: 1150px;
+      max-width: 1100px;
       margin: auto;
       display: flex;
       justify-content: space-between;
@@ -65,12 +68,12 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 11px;
+      gap: 10px;
     }
 
     .brand img {
-      width: 48px;
-      height: 48px;
+      width: 45px;
+      height: 45px;
       object-fit: contain;
       border-radius: 50%;
       background: white;
@@ -79,7 +82,7 @@
 
     .brand h1 {
       margin: 0 0 4px;
-      font-size: 21px;
+      font-size: 20px;
     }
 
     .brand p {
@@ -97,10 +100,10 @@
       color: white;
       text-decoration: none;
       font-weight: bold;
-      font-size: 13px;
-      padding: 9px 11px;
-      border: 1px solid rgba(255, 255, 255, 0.65);
-      border-radius: 8px;
+      font-size: 12px;
+      padding: 8px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      border-radius: 7px;
       transition: 0.2s;
     }
 
@@ -109,63 +112,53 @@
       color: var(--green);
     }
 
-    /* =========================
-       MAIN LAYOUT
-    ========================= */
-
+    /* MAIN PAGE WIDTH: smaller */
     .container {
-      width: 92%;
-      max-width: 1120px;
-      margin: 18px auto 28px;
+      width: 88%;
+      max-width: 1050px;
+      margin: 20px auto 28px;
     }
 
-    /* General content boxes:
-       transparent so the campus is visible */
+    /* TRANSPARENT CONTENT BOXES */
     .panel {
-      background: rgba(255, 255, 255, 0.78);
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      border-radius: 13px;
-      padding: 19px;
-      box-shadow: 0 5px 17px rgba(0, 0, 0, 0.12);
-      margin-bottom: 17px;
+      background: var(--panel-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 17px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.13);
       backdrop-filter: blur(3px);
+      margin-bottom: 16px;
     }
 
-    /* =========================
-       UPPER HERO / COVER
-    ========================= */
-
+    /* SMALLER HERO / TITLE BOX */
     .hero {
-      width: 92%;
-      max-width: 1120px;
-      margin: 20px auto 16px;
-      background: rgba(235, 248, 239, 0.79);
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      border-radius: 15px;
-      padding: 26px 22px;
+      width: 84%;
+      max-width: 950px;
+      margin: 22px auto 18px;
+      background: var(--hero-bg);
+      border: 1px solid rgba(255, 255, 255, 0.38);
+      border-radius: 14px;
+      padding: 23px 20px;
       text-align: center;
-      box-shadow: 0 5px 18px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
       backdrop-filter: blur(3px);
     }
 
     .hero h2 {
-      color: var(--green);
-      font-size: clamp(25px, 3.5vw, 36px);
+      color: #075c3b;
+      font-size: clamp(23px, 3vw, 32px);
       line-height: 1.2;
       margin: 0 0 10px;
     }
 
     .hero p {
-      max-width: 700px;
+      max-width: 680px;
       line-height: 1.55;
-      margin: 0 auto 15px;
       font-size: 14px;
+      margin: 0 auto 15px;
     }
 
-    /* =========================
-       BUTTONS
-    ========================= */
-
+    /* BUTTONS */
     .button,
     button {
       display: inline-block;
@@ -173,12 +166,12 @@
       border-radius: 7px;
       background: var(--bright);
       color: white;
-      padding: 10px 14px;
+      padding: 9px 13px;
       font-weight: bold;
       text-decoration: none;
       cursor: pointer;
-      font-size: 13px;
-      transition: background 0.2s;
+      font-size: 12px;
+      transition: 0.2s;
     }
 
     .button:hover,
@@ -197,61 +190,56 @@
 
     .small {
       padding: 7px 9px;
-      font-size: 12px;
+      font-size: 11px;
     }
 
-    /* =========================
-       EMOJI STICKERS
-    ========================= */
-
+    /* EMOJI STICKERS */
     .sticker-row {
       display: flex;
       justify-content: center;
-      gap: 9px;
+      gap: 8px;
       flex-wrap: wrap;
-      margin: 0 0 14px;
+      margin: 0 0 12px;
     }
 
     .sticker {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      padding: 7px 11px;
+      gap: 6px;
+      padding: 6px 10px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.83);
+      background: rgba(255, 255, 255, 0.78);
       border: 1px solid rgba(7, 92, 59, 0.18);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
       font-weight: bold;
+      font-size: 12px;
       color: var(--green);
-      font-size: 13px;
     }
 
     .sticker span {
-      font-size: 17px;
+      font-size: 16px;
     }
 
-    /* =========================
-       FLASH MESSAGES
-    ========================= */
-
+    /* SUCCESS / ERROR MESSAGES */
     .flash {
-      border-radius: 8px;
-      padding: 11px 14px;
+      border-radius: 7px;
+      padding: 10px 12px;
       margin: 0 0 10px;
-      background: rgba(216, 243, 223, 0.95);
+      background: rgba(216, 243, 223, 0.94);
       color: #155c2e;
       border-left: 4px solid #198754;
+      font-size: 13px;
     }
 
     .flash.warning {
-      background: rgba(255, 240, 194, 0.96);
+      background: rgba(255, 240, 194, 0.94);
       color: #795500;
       border-color: #d49b00;
     }
 
     .flash.danger,
     .flash.error {
-      background: rgba(248, 215, 218, 0.96);
+      background: rgba(248, 215, 218, 0.94);
       color: #842029;
       border-color: #b42332;
     }
@@ -261,13 +249,11 @@
       color: var(--green);
     }
 
-    /* =========================
-       FORMS
-    ========================= */
-
+    /* FORMS */
     label {
       display: block;
       font-weight: bold;
+      font-size: 13px;
       margin: 10px 0 5px;
     }
 
@@ -275,24 +261,24 @@
     select,
     textarea {
       width: 100%;
-      padding: 10px;
-      border: 1px solid #c8d5cc;
+      padding: 9px 10px;
+      border: 1px solid rgba(95, 125, 105, 0.40);
       border-radius: 7px;
       font: inherit;
-      font-size: 14px;
-      background: rgba(255, 255, 255, 0.91);
+      font-size: 13px;
+      background: rgba(255, 255, 255, 0.82);
       color: #24332b;
     }
 
     textarea {
-      min-height: 100px;
+      min-height: 95px;
       resize: vertical;
     }
 
     .form-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0 15px;
+      gap: 0 14px;
     }
 
     .full {
@@ -300,136 +286,118 @@
     }
 
     .help {
-      color: #5c6b61;
+      color: #42574a;
       font-size: 12px;
-      line-height: 1.5;
+      line-height: 1.45;
     }
 
-    /* =========================
-       SEARCH / FILTER BOX
-    ========================= */
-
+    /* SEARCH BOX */
     .filter-grid {
       display: grid;
       grid-template-columns: 2fr repeat(3, minmax(0, 1fr));
-      gap: 10px;
+      gap: 9px;
     }
 
-    /* =========================
-       STATISTICS BOXES
-       All four boxes have equal size
-    ========================= */
-
+    /* STATISTICS: same size for all four boxes */
     .stats {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
-      margin-bottom: 18px;
-      align-items: stretch;
+      gap: 10px;
+      margin-bottom: 17px;
     }
 
     .stat {
       min-width: 0;
-      min-height: 95px;
-      background: rgba(244, 250, 245, 0.79);
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      border-radius: 11px;
-      padding: 14px;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      overflow-wrap: anywhere;
-      backdrop-filter: blur(2px);
+      min-height: 86px;
+      background: rgba(238, 247, 240, 0.64);
+      border: 1px solid rgba(213, 232, 218, 0.65);
+      border-radius: 9px;
+      padding: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
     }
 
     .stat strong {
       display: block;
       color: var(--green);
-      font-size: 24px;
+      font-size: 22px;
       margin-top: 5px;
     }
 
-    /* =========================
-       REPORT CARDS
-    ========================= */
-
+    /* REPORT CARDS */
     .report-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 15px;
-      align-items: stretch;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
     }
 
     .report-card {
       min-width: 0;
       overflow: hidden;
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.82);
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.73);
+      border: 1px solid rgba(255, 255, 255, 0.38);
+      box-shadow: 0 4px 13px rgba(0, 0, 0, 0.13);
       display: flex;
       flex-direction: column;
-      backdrop-filter: blur(2px);
     }
 
     .report-photo,
     .placeholder-photo {
       width: 100%;
-      height: 165px;
+      height: 155px;
       object-fit: cover;
-      background: rgba(232, 238, 233, 0.8);
+      background: rgba(232, 238, 233, 0.7);
     }
 
     .placeholder-photo {
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 45px;
+      font-size: 42px;
     }
 
     .report-content {
-      padding: 14px;
+      padding: 13px;
       display: flex;
       flex-direction: column;
       flex: 1;
     }
 
     .report-content h3 {
+      font-size: 16px;
       margin: 8px 0;
-      font-size: 17px;
     }
 
     .report-content p {
+      font-size: 13px;
       line-height: 1.45;
       margin: 4px 0;
       overflow-wrap: anywhere;
-      font-size: 13px;
     }
 
     .tag {
       display: inline-flex;
       align-self: flex-start;
-      padding: 5px 9px;
+      padding: 5px 8px;
       border-radius: 999px;
       font-size: 11px;
       font-weight: bold;
-      background: #d8f3df;
+      background: rgba(216, 243, 223, 0.92);
       color: #075c3b;
     }
 
     .found {
-      background: #dbeafe;
+      background: rgba(219, 234, 254, 0.92);
       color: #1d4ed8;
     }
 
     .pending {
-      background: #fff0c2;
+      background: rgba(255, 240, 194, 0.92);
       color: #795500;
     }
 
     .returned {
-      background: #e5e7eb;
+      background: rgba(229, 231, 235, 0.92);
       color: #374151;
     }
 
@@ -437,40 +405,29 @@
       display: flex;
       gap: 7px;
       flex-wrap: wrap;
-      margin-top: 12px;
+      margin-top: 10px;
     }
 
     .empty-state {
       text-align: center;
-      padding: 25px 16px;
-      background: rgba(255, 255, 255, 0.79);
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
-      backdrop-filter: blur(2px);
+      padding: 22px 15px;
     }
-
-    /* =========================
-       REPORT DETAILS
-    ========================= */
 
     .detail-photo {
       max-width: 100%;
-      max-height: 380px;
+      max-height: 350px;
       object-fit: contain;
-      border-radius: 10px;
-      background: rgba(238, 242, 238, 0.8);
+      border-radius: 9px;
+      background: rgba(238, 242, 238, 0.7);
     }
 
     .detail-layout {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: 20px;
+      gap: 18px;
     }
 
-    /* =========================
-       ADMIN TABLES
-    ========================= */
-
+    /* ADMIN TABLE */
     .table-wrap {
       overflow-x: auto;
     }
@@ -478,20 +435,20 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      background: rgba(255, 255, 255, 0.94);
+      background: rgba(255, 255, 255, 0.82);
+      font-size: 13px;
     }
 
     th,
     td {
       text-align: left;
-      padding: 10px;
-      border-bottom: 1px solid #e1e8e3;
+      padding: 9px;
+      border-bottom: 1px solid rgba(225, 232, 227, 0.8);
       vertical-align: top;
-      font-size: 13px;
     }
 
     th {
-      background: #eaf4ed;
+      background: rgba(234, 244, 237, 0.92);
       color: var(--green);
     }
 
@@ -506,151 +463,121 @@
     }
 
     .inline-form select {
-      min-width: 115px;
+      min-width: 110px;
     }
 
-    /* =========================
-       FOOTER
-    ========================= */
-
+    /* FOOTER */
     .site-footer {
       text-align: center;
-      padding: 15px 12px;
+      padding: 16px 12px;
       color: white;
-      background: rgba(3, 55, 37, 0.87);
-      margin-top: 20px;
+      background: rgba(3, 50, 34, 0.82);
+      backdrop-filter: blur(4px);
       font-size: 12px;
+      margin-top: 20px;
     }
 
     .site-footer p {
       margin: 5px 0;
     }
 
-    /* =========================
-       TABLET
-    ========================= */
-
-    @media (max-width: 900px) {
-      .header-inner {
-        justify-content: center;
-      }
-
-      .filter-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .report-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .stats {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 8px;
-      }
-
-      .stat {
-        padding: 10px;
-        font-size: 12px;
-      }
-
-      .stat strong {
-        font-size: 21px;
-      }
-    }
-
-    /* =========================
-       MOBILE
-    ========================= */
-
-    @media (max-width: 600px) {
-      body {
-        background-attachment: scroll;
-      }
-
-      .site-header {
-        padding: 12px 4%;
-      }
-
-      .brand h1 {
-        font-size: 19px;
-      }
-
-      .brand p {
-        font-size: 11px;
-      }
-
-      nav {
-        justify-content: center;
-      }
-
-      nav a {
-        padding: 8px 9px;
-        font-size: 12px;
-      }
-
-      .container,
-      .hero {
-        width: 94%;
-      }
-
-      .container {
-        margin-top: 13px;
-      }
-
-      .hero {
-        margin-top: 14px;
-        padding: 22px 14px;
-      }
-
-      .hero h2 {
-        font-size: 25px;
-      }
-
-      .hero p {
-        font-size: 13px;
-      }
-
-      .panel {
-        padding: 14px;
-      }
-
-      .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 9px;
-      }
-
-      .stat {
-        min-height: 85px;
-        padding: 12px;
-        font-size: 13px;
-      }
-
-      .stat strong {
-        font-size: 22px;
-      }
-
+    /* TABLETS */
+    @media (max-width: 800px) {
       .filter-grid,
       .form-grid,
       .detail-layout {
         grid-template-columns: 1fr;
       }
 
-      .report-grid {
-        grid-template-columns: 1fr;
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .report-photo,
-      .placeholder-photo {
-        height: 190px;
+      .brand h1 {
+        font-size: 18px;
       }
 
-      .sticker {
-        padding: 6px 9px;
+      .container {
+        width: 92%;
+      }
+
+      .hero {
+        width: 90%;
+        padding: 20px 16px;
+      }
+    }
+
+    /* MOBILE */
+    @media (max-width: 480px) {
+      .site-header {
+        padding: 11px 4%;
+      }
+
+      .header-inner {
+        align-items: flex-start;
+      }
+
+      nav {
+        width: 100%;
+      }
+
+      nav a {
+        font-size: 11px;
+        padding: 7px 8px;
+      }
+
+      .brand img {
+        width: 39px;
+        height: 39px;
+      }
+
+      .brand h1 {
+        font-size: 16px;
+      }
+
+      .brand p {
+        font-size: 10px;
+      }
+
+      .container {
+        width: 94%;
+        margin-top: 14px;
+      }
+
+      .hero {
+        width: 92%;
+        margin-top: 15px;
+        padding: 18px 13px;
+      }
+
+      .hero h2 {
+        font-size: 23px;
+      }
+
+      .hero p {
         font-size: 12px;
       }
 
-      .site-footer {
-        padding: 14px 10px;
+      .panel {
+        padding: 13px;
+        margin-bottom: 12px;
+      }
+
+      .stats {
+        gap: 8px;
+      }
+
+      .stat {
+        padding: 10px;
+        min-height: 78px;
+      }
+
+      .stat strong {
+        font-size: 20px;
+      }
+
+      .report-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -661,14 +588,10 @@
 <body>
   <header class="site-header">
     <div class="header-inner">
-
       <div class="brand">
-        <img
-          src="{{ campus_logo }}"
-          alt="SLSU JGE logo"
-          onerror="this.style.display='none'"
-        >
-
+        <img src="{{ campus_logo }}"
+             alt="SLSU JGE logo"
+             onerror="this.style.display='none'">
         <div>
           <h1>SLSU JGE FindHub</h1>
           <p>Lost and Found Information System</p>
@@ -686,13 +609,12 @@
           <a href="{{ url_for('admin_login') }}">🔐 Admin Login</a>
         {% endif %}
       </nav>
-
     </div>
   </header>
 
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-      <div class="container" style="margin-bottom: 0;">
+      <div class="container" style="margin-bottom:0">
         {% for category, message in messages %}
           <div class="flash {{ category }}">{{ message }}</div>
         {% endfor %}
@@ -700,7 +622,6 @@
     {% endif %}
   {% endwith %}
 
-  <!-- The hero/cover stays above the statistics and search boxes -->
   {% block hero %}{% endblock %}
 
   <main class="container">
@@ -708,7 +629,7 @@
   </main>
 
   <footer class="site-footer">
-    <p>🎒 🔑 📱 🪪 &nbsp; Helping the SLSU JGE community find what matters.</p>
+    <p>🎒 🔑 📱 🪪 Helping the SLSU JGE community find what matters.</p>
     <p>&copy; {{ today.year }} SLSU JGE FindHub</p>
   </footer>
 </body>
