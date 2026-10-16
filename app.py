@@ -16,7 +16,7 @@ from werkzeug.utils import secure_filename
 # ---------------- CONFIGURATION ----------------
 
 BASE_DIR = Path(__file__).resolve().parent
-DATA_DIR = Path(os.environ.get("DATA_DIR", "/tmp/slsu_findhub"))
+DATA_DIR = Path(os.environ.get("DATA_DIR", str(BASE_DIR / "data")))
 UPLOAD_DIR = DATA_DIR / "uploads"
 
 DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -24,17 +24,17 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 app = Flask(__name__)
 
-app.config["SECRET_KEY"] = (
-    os.environ.get("SECRET_KEY") or secrets.token_hex(32)
+app.config.update(
+    SECRET_KEY=os.environ.get("SECRET_KEY") or secrets.token_hex(32),
+    SQLALCHEMY_DATABASE_URI=(
+        "sqlite:///" + str((DATA_DIR / "findhub.db").resolve())
+    ),
+    SQLALCHEMY_TRACK_MODIFICATIONS=False,
+    MAX_CONTENT_LENGTH=5 * 1024 * 1024,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    PERMANENT_SESSION_LIFETIME=60 * 60 * 8,
 )
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "sqlite:///" + str((DATA_DIR / "findhub.db").resolve())
-)
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
-app.config["SESSION_COOKIE_HTTPONLY"] = True
-app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-app.config["PERMANENT_SESSION_LIFETIME"] = 60 * 60 * 8
 
 db = SQLAlchemy(app)
 
@@ -53,7 +53,7 @@ CATEGORIES = [
     "Other",
 ]
 
-# Official SLSU JGE campus images
+# SLSU JGE Tagkawayan campus images
 CAMPUS_LOGO = (
     "https://www.slsu.edu.ph/wp-content/uploads/2023/05/"
     "Campuses/Campus-Logo/SLSU-JGE-Logo.png"
@@ -69,10 +69,11 @@ CAMPUS_PHOTO = (
 
 class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-
     report_type = db.Column(db.String(10), nullable=False)
     item_name = db.Column(db.String(120), nullable=False)
-    category = db.Column(db.String(60), nullable=False, default="Other")
+    category = db.Column(
+        db.String(60), nullable=False, default="Other"
+    )
     description = db.Column(db.Text, nullable=False)
     location = db.Column(db.String(180), nullable=False)
     incident_date = db.Column(db.String(10), nullable=False)
@@ -92,18 +93,15 @@ class Report(db.Model):
 
 class Claim(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-
     report_id = db.Column(
         db.Integer,
         db.ForeignKey("report.id"),
         nullable=False
     )
-
     claimant_name = db.Column(db.String(120), nullable=False)
     student_or_staff_id = db.Column(db.String(80))
     contact = db.Column(db.String(180), nullable=False)
     proof = db.Column(db.Text, nullable=False)
-
     status = db.Column(db.String(20), default="Pending", nullable=False)
     created_at = db.Column(
         db.DateTime, default=datetime.utcnow, nullable=False
@@ -119,7 +117,6 @@ class Claim(db.Model):
     )
 
 
-# Create database tables when the application starts.
 with app.app_context():
     db.create_all()
 
@@ -135,31 +132,26 @@ def admin_required(view):
                 "warning"
             )
             return redirect(url_for("admin_login"))
-
         return view(*args, **kwargs)
-
     return wrapped
 
 
 def allowed_file(filename):
     return (
         "." in filename
-        and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+        and filename.rsplit(".", 1)[1].lower()
+        in ALLOWED_EXTENSIONS
     )
-
-
-def common_context():
-    return {
-        "campus_logo": CAMPUS_LOGO,
-        "campus_photo": CAMPUS_PHOTO,
-        "today": date.today().isoformat(),
-        "admin_logged_in": bool(session.get("is_admin")),
-    }
 
 
 @app.context_processor
 def inject_globals():
-    return common_context()
+    return {
+        "campus_logo": CAMPUS_LOGO,
+        "campus_photo": CAMPUS_PHOTO,
+        "today": date.today(),
+        "admin_logged_in": bool(session.get("is_admin")),
+    }
 
 
 # ---------------- PUBLIC HOME PAGE ----------------
@@ -199,15 +191,19 @@ def home():
 
     total_found = (
         Report.query
-        .filter_by(report_type="Found")
-        .filter(Report.status != "Archived")
+        .filter(
+            Report.report_type == "Found",
+            Report.status != "Archived"
+        )
         .count()
     )
 
     total_lost = (
         Report.query
-        .filter_by(report_type="Lost")
-        .filter(Report.status != "Archived")
+        .filter(
+            Report.report_type == "Lost",
+            Report.status != "Archived"
+        )
         .count()
     )
 
@@ -230,12 +226,12 @@ def home():
 @app.route("/report/new", methods=["GET", "POST"])
 def new_report():
     if request.method == "POST":
-        kind = request.form.get("report_type", "")
+        kind = request.form.get("report_type", "").strip()
         name = request.form.get("item_name", "").strip()
-        category = request.form.get("category", "Other")
+        category = request.form.get("category", "Other").strip()
         description = request.form.get("description", "").strip()
         location = request.form.get("location", "").strip()
-        incident_date = request.form.get("incident_date", "")
+        incident_date = request.form.get("incident_date", "").strip()
 
         contact_name = request.form.get("contact_name", "").strip()
         contact = request.form.get("contact", "").strip()
@@ -259,10 +255,8 @@ def new_report():
 
         try:
             parsed = date.fromisoformat(incident_date)
-
             if parsed > date.today():
                 raise ValueError
-
         except ValueError:
             flash(
                 "Please choose a valid date that is not in the future.",
@@ -282,10 +276,22 @@ def new_report():
                 return redirect(url_for("new_report"))
 
             safe = secure_filename(upload.filename)
+            if not safe or "." not in safe:
+                flash("Please choose a valid image file.", "warning")
+                return redirect(url_for("new_report"))
+
             extension = safe.rsplit(".", 1)[1].lower()
             photo_name = f"{secrets.token_hex(16)}.{extension}"
 
-            upload.save(UPLOAD_DIR / photo_name)
+            try:
+                upload.save(UPLOAD_DIR / photo_name)
+            except OSError:
+                app.logger.exception("Could not save uploaded image")
+                flash(
+                    "The photo could not be saved. Please try again.",
+                    "danger"
+                )
+                return redirect(url_for("new_report"))
 
         report = Report(
             report_type=kind,
@@ -301,11 +307,28 @@ def new_report():
         )
 
         db.session.add(report)
-        db.session.commit()
+
+        try:
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+
+            if photo_name:
+                try:
+                    (UPLOAD_DIR / photo_name).unlink(missing_ok=True)
+                except OSError:
+                    pass
+
+            app.logger.exception("Failed to save report")
+            flash(
+                "Sorry, your report could not be saved. Please try again.",
+                "danger"
+            )
+            return redirect(url_for("new_report"))
 
         flash(
-            "Your report is live. Thank you for helping "
-            "the JGE community!",
+            "Your report was submitted successfully and is now "
+            "visible on FindHub!",
             "success"
         )
 
@@ -375,13 +398,23 @@ def submit_claim(report_id):
     )
 
     report.status = "Pending Claim"
-
     db.session.add(claim)
-    db.session.commit()
+
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("Failed to save claim")
+        flash(
+            "Your claim could not be submitted. Please try again.",
+            "danger"
+        )
+        return redirect(
+            url_for("report_detail", report_id=report.id)
+        )
 
     flash(
-        "Claim request submitted privately to the administrator "
-        "for verification.",
+        "Claim request submitted to the administrator for verification.",
         "success"
     )
 
@@ -424,6 +457,7 @@ def admin_login():
             session["is_admin"] = True
             session.permanent = True
 
+            flash("Welcome, administrator!", "success")
             return redirect(url_for("admin_dashboard"))
 
         flash(
@@ -449,7 +483,9 @@ def admin_dashboard():
     ).limit(6).all()
 
     stats = {
-        "all": Report.query.count(),
+        "all": Report.query.filter(
+            Report.status != "Archived"
+        ).count(),
         "open": Report.query.filter_by(status="Open").count(),
         "claims": Claim.query.filter_by(status="Pending").count(),
         "returned": Report.query.filter_by(status="Returned").count(),
@@ -478,16 +514,23 @@ def update_report_status(report_id):
         abort(400)
 
     report.status = status
-    db.session.commit()
+
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("Failed to update report")
+        flash(
+            "Could not update this report. Please try again.",
+            "danger"
+        )
+        return redirect(url_for("admin_dashboard"))
 
     flash(
-        f"Report #{report.id} status updated.",
+        f'Report #{report.id} status updated to "{status}".',
         "success"
     )
-
-    return redirect(
-        request.referrer or url_for("admin_dashboard")
-    )
+    return redirect(url_for("admin_dashboard"))
 
 
 # ---------------- DELETE A REPORT ----------------
@@ -499,21 +542,30 @@ def update_report_status(report_id):
 @admin_required
 def delete_report(report_id):
     report = db.get_or_404(Report, report_id)
-
-    if report.photo:
-        try:
-            (UPLOAD_DIR / report.photo).unlink(missing_ok=True)
-        except OSError:
-            pass
+    photo_name = report.photo
 
     db.session.delete(report)
-    db.session.commit()
 
-    flash(
-        "Report and its claim requests deleted.",
-        "success"
-    )
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("Failed to delete report")
+        flash(
+            "Could not delete this report. Please try again.",
+            "danger"
+        )
+        return redirect(url_for("admin_dashboard"))
 
+    if photo_name:
+        try:
+            (UPLOAD_DIR / photo_name).unlink(missing_ok=True)
+        except OSError:
+            app.logger.warning(
+                "Could not remove photo file %s", photo_name
+            )
+
+    flash("Report and its claim requests deleted.", "success")
     return redirect(url_for("admin_dashboard"))
 
 
@@ -550,14 +602,21 @@ def update_claim_status(claim_id):
 
     if status == "Approved":
         claim.report.status = "Returned"
-
     elif claim.report.status == "Pending Claim":
         claim.report.status = "Open"
 
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        app.logger.exception("Failed to update claim")
+        flash(
+            "Could not update this claim. Please try again.",
+            "danger"
+        )
+        return redirect(url_for("admin_claims"))
 
     flash("Claim request updated.", "success")
-
     return redirect(url_for("admin_claims"))
 
 
@@ -570,17 +629,9 @@ def export_csv():
     writer = csv.writer(output)
 
     writer.writerow([
-        "ID",
-        "Type",
-        "Item",
-        "Category",
-        "Description",
-        "Location",
-        "Date",
-        "Status",
-        "Reporter",
-        "Private Contact",
-        "Created At",
+        "ID", "Type", "Item", "Category", "Description",
+        "Location", "Date", "Status", "Reporter",
+        "Private Contact", "Created At",
     ])
 
     for report in Report.query.order_by(
@@ -614,9 +665,7 @@ def export_csv():
 @app.route("/admin/logout")
 def admin_logout():
     session.clear()
-
     flash("You have been logged out.", "success")
-
     return redirect(url_for("home"))
 
 
@@ -642,7 +691,6 @@ def security_headers(response):
     response.headers["Permissions-Policy"] = (
         "camera=(), microphone=(), geolocation=()"
     )
-
     return response
 
 
