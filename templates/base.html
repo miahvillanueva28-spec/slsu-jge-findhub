@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -11,10 +12,19 @@
       --deep: #063f2a;
       --bright: #087647;
       --ink: #24332b;
+
+      /* Transparent box colors */
+      --box-bg: rgba(255, 255, 255, 0.76);
+      --soft-bg: rgba(232, 246, 235, 0.78);
+      --border-color: rgba(255, 255, 255, 0.58);
     }
 
     * {
       box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     body {
@@ -22,10 +32,12 @@
       min-height: 100vh;
       font-family: Arial, sans-serif;
       color: var(--ink);
+
+      /* Campus background stays visible */
       background:
         linear-gradient(
-          rgba(3, 35, 23, 0.42),
-          rgba(3, 35, 23, 0.48)
+          rgba(3, 35, 23, 0.32),
+          rgba(3, 35, 23, 0.38)
         ),
         url("{{ campus_photo }}") center center / cover fixed no-repeat;
     }
@@ -36,50 +48,51 @@
 
     /* HEADER */
     .site-header {
-      background: rgba(5, 75, 47, 0.90);
+      background: rgba(5, 75, 47, 0.91);
       color: white;
-      padding: 15px 5%;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+      padding: 12px 4%;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.20);
+      backdrop-filter: blur(5px);
     }
 
     .header-inner {
-      max-width: 1250px;
+      max-width: 1150px;
       margin: auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 18px;
+      gap: 14px;
       flex-wrap: wrap;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 13px;
+      gap: 10px;
     }
 
     .brand img {
-      width: 58px;
-      height: 58px;
+      width: 48px;
+      height: 48px;
       object-fit: contain;
       border-radius: 50%;
       background: white;
-      padding: 4px;
+      padding: 3px;
     }
 
     .brand h1 {
-      margin: 0 0 5px;
-      font-size: 24px;
+      margin: 0 0 4px;
+      font-size: 21px;
     }
 
     .brand p {
       margin: 0;
-      font-size: 13px;
+      font-size: 12px;
     }
 
     nav {
       display: flex;
-      gap: 9px;
+      gap: 7px;
       flex-wrap: wrap;
     }
 
@@ -87,9 +100,9 @@
       color: white;
       text-decoration: none;
       font-weight: bold;
-      font-size: 14px;
-      padding: 10px 13px;
-      border: 1px solid rgba(255, 255, 255, 0.65);
+      font-size: 13px;
+      padding: 8px 11px;
+      border: 1px solid rgba(255, 255, 255, 0.55);
       border-radius: 8px;
       transition: 0.2s;
     }
@@ -99,47 +112,49 @@
       color: var(--green);
     }
 
-    /* MAIN CONTENT */
+    /* MAIN CONTAINER */
     .container {
-      width: 90%;
-      max-width: 1200px;
-      margin: 24px auto 35px;
+      width: 88%;
+      max-width: 1080px;
+      margin: 20px auto 28px;
     }
 
+    /* GENERAL BOXES */
     .panel {
-      background: rgba(255, 255, 255, 0.76);
+      background: var(--box-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 13px;
+      padding: 18px;
+      box-shadow: 0 5px 18px rgba(0, 0, 0, 0.13);
+      margin-bottom: 18px;
       backdrop-filter: blur(3px);
-      -webkit-backdrop-filter: blur(3px);
-      border-radius: 16px;
-      padding: 24px;
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.17);
-      margin-bottom: 20px;
     }
 
-    /* WELCOME / HERO BOX */
+    /* HERO BOX - SMALLER */
     .hero {
-      max-width: 1250px;
-      width: 90%;
-      margin: 24px auto 20px;
-      background: rgba(229, 244, 233, 0.76);
-      backdrop-filter: blur(3px);
-      -webkit-backdrop-filter: blur(3px);
-      border-radius: 18px;
-      padding: 30px 24px;
+      width: 88%;
+      max-width: 1080px;
+      margin: 22px auto 18px;
+      background: rgba(229, 244, 233, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.60);
+      border-radius: 15px;
+      padding: 25px 22px;
       text-align: center;
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.17);
+      box-shadow: 0 5px 18px rgba(0, 0, 0, 0.13);
+      backdrop-filter: blur(3px);
     }
 
     .hero h2 {
       color: var(--green);
-      font-size: clamp(27px, 3.5vw, 40px);
-      margin: 0 0 12px;
+      font-size: clamp(25px, 3.2vw, 34px);
+      margin: 0 0 10px;
     }
 
     .hero p {
-      max-width: 720px;
-      line-height: 1.7;
-      margin: 0 auto 20px;
+      max-width: 680px;
+      line-height: 1.6;
+      margin: 0 auto 16px;
+      font-size: 14px;
     }
 
     /* BUTTONS */
@@ -150,18 +165,19 @@
       border-radius: 8px;
       background: var(--bright);
       color: white;
-      padding: 11px 16px;
+      padding: 9px 13px;
       font-weight: bold;
       text-decoration: none;
       cursor: pointer;
-      font-size: 14px;
-      transition: background 0.2s;
+      font-size: 13px;
+      transition: 0.2s;
     }
 
     .button:hover,
     button:hover {
       background: var(--deep);
       color: white;
+      transform: translateY(-1px);
     }
 
     .secondary {
@@ -173,7 +189,7 @@
     }
 
     .small {
-      padding: 8px 10px;
+      padding: 7px 9px;
       font-size: 12px;
     }
 
@@ -181,47 +197,48 @@
     .sticker-row {
       display: flex;
       justify-content: center;
-      gap: 12px;
+      gap: 9px;
       flex-wrap: wrap;
-      margin: 0 0 18px;
+      margin: 0 0 15px;
     }
 
     .sticker {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
+      gap: 7px;
+      padding: 7px 11px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.86);
-      border: 2px solid rgba(214, 233, 219, 0.9);
-      box-shadow: 2px 4px 0 rgba(7, 92, 59, 0.10);
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(7, 92, 59, 0.18);
+      box-shadow: 1px 3px 5px rgba(0, 0, 0, 0.08);
       font-weight: bold;
+      font-size: 13px;
       color: var(--green);
     }
 
     .sticker span {
-      font-size: 20px;
+      font-size: 17px;
     }
 
     /* FLASH MESSAGES */
     .flash {
-      border-radius: 9px;
-      padding: 13px 16px;
-      margin: 0 0 12px;
-      background: rgba(216, 243, 223, 0.96);
+      border-radius: 8px;
+      padding: 10px 13px;
+      margin: 0 0 10px;
+      background: rgba(216, 243, 223, 0.94);
       color: #155c2e;
-      border-left: 5px solid #198754;
+      border-left: 4px solid #198754;
     }
 
     .flash.warning {
-      background: rgba(255, 240, 194, 0.96);
+      background: rgba(255, 240, 194, 0.95);
       color: #795500;
       border-color: #d49b00;
     }
 
     .flash.danger,
     .flash.error {
-      background: rgba(248, 215, 218, 0.96);
+      background: rgba(248, 215, 218, 0.95);
       color: #842029;
       border-color: #b42332;
     }
@@ -235,30 +252,32 @@
     label {
       display: block;
       font-weight: bold;
-      margin: 12px 0 6px;
+      margin: 10px 0 5px;
+      font-size: 13px;
     }
 
     input,
     select,
     textarea {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
       border: 1px solid #c8d5cc;
-      border-radius: 8px;
+      border-radius: 7px;
       font: inherit;
-      background: rgba(255, 255, 255, 0.91);
+      font-size: 13px;
+      background: rgba(255, 255, 255, 0.88);
       color: #24332b;
     }
 
     textarea {
-      min-height: 115px;
+      min-height: 100px;
       resize: vertical;
     }
 
     .form-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 0 18px;
+      gap: 0 15px;
     }
 
     .full {
@@ -266,146 +285,159 @@
     }
 
     .help {
-      color: #526258;
-      font-size: 13px;
+      color: #46584c;
+      font-size: 12px;
       line-height: 1.5;
     }
 
     /* SEARCH FILTERS */
     .filter-grid {
       display: grid;
-      grid-template-columns: 2fr repeat(3, minmax(140px, 1fr));
-      gap: 12px;
+      grid-template-columns: 2fr repeat(3, minmax(0, 1fr));
+      gap: 9px;
     }
 
-    /* STATISTICS */
+    /* STATISTICS - ALL FOUR BOXES SAME SIZE */
     .stats {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
-      margin-bottom: 22px;
+      gap: 12px;
+      margin-bottom: 18px;
+      align-items: stretch;
     }
 
     .stat {
+      width: 100%;
+      min-width: 0;
+      min-height: 88px;
       background: rgba(238, 247, 240, 0.76);
       border: 1px solid rgba(213, 232, 218, 0.85);
-      border-radius: 12px;
-      padding: 16px;
-      min-width: 0;
+      border-radius: 11px;
+      padding: 13px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow-wrap: anywhere;
     }
 
     .stat strong {
       display: block;
       color: var(--green);
-      font-size: 27px;
-      margin-top: 6px;
+      font-size: 23px;
+      margin-top: 5px;
     }
 
     /* REPORT CARDS */
     .report-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+      align-items: stretch;
     }
 
     .report-card {
       overflow: hidden;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.80);
-      backdrop-filter: blur(3px);
-      -webkit-backdrop-filter: blur(3px);
-      box-shadow: 0 7px 20px rgba(0, 0, 0, 0.18);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.79);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      box-shadow: 0 5px 16px rgba(0, 0, 0, 0.13);
       display: flex;
       flex-direction: column;
-      min-width: 0;
+      backdrop-filter: blur(2px);
     }
 
     .report-photo,
     .placeholder-photo {
       width: 100%;
-      height: 205px;
+      height: 170px;
       object-fit: cover;
-      background: rgba(232, 238, 233, 0.85);
+      background: rgba(232, 238, 233, 0.75);
     }
 
     .placeholder-photo {
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 54px;
+      font-size: 45px;
     }
 
     .report-content {
-      padding: 18px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
       flex: 1;
     }
 
     .report-content h3 {
-      margin: 11px 0;
+      margin: 8px 0;
+      font-size: 17px;
     }
 
     .report-content p {
-      line-height: 1.5;
-      margin: 5px 0;
+      line-height: 1.45;
+      margin: 4px 0;
+      font-size: 13px;
       overflow-wrap: anywhere;
     }
 
     .tag {
       display: inline-flex;
       align-self: flex-start;
-      padding: 6px 10px;
+      padding: 5px 9px;
       border-radius: 999px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: bold;
-      background: rgba(216, 243, 223, 0.95);
+      background: #d8f3df;
       color: #075c3b;
     }
 
     .found {
-      background: rgba(219, 234, 254, 0.96);
+      background: #dbeafe;
       color: #1d4ed8;
     }
 
     .pending {
-      background: rgba(255, 240, 194, 0.96);
+      background: #fff0c2;
       color: #795500;
     }
 
     .returned {
-      background: rgba(229, 231, 235, 0.96);
+      background: #e5e7eb;
       color: #374151;
     }
 
     .card-actions {
       display: flex;
-      gap: 8px;
+      gap: 7px;
       flex-wrap: wrap;
-      margin-top: 14px;
+      margin-top: 12px;
     }
 
     .empty-state {
       text-align: center;
-      padding: 30px 20px;
+      padding: 23px 15px;
+    }
+
+    .empty-state h3 {
+      margin: 10px 0;
     }
 
     /* REPORT DETAILS */
     .detail-photo {
       max-width: 100%;
-      max-height: 430px;
+      max-height: 350px;
       object-fit: contain;
-      border-radius: 12px;
-      background: rgba(238, 242, 238, 0.85);
+      border-radius: 10px;
+      background: rgba(238, 242, 238, 0.75);
     }
 
     .detail-layout {
       display: grid;
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-      gap: 26px;
+      gap: 20px;
     }
 
-    /* TABLES */
+    /* ADMIN TABLES */
     .table-wrap {
       overflow-x: auto;
     }
@@ -413,62 +445,110 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      background: rgba(255, 255, 255, 0.94);
+      background: rgba(255, 255, 255, 0.88);
     }
 
     th,
     td {
       text-align: left;
-      padding: 12px;
+      padding: 10px;
       border-bottom: 1px solid #e1e8e3;
       vertical-align: top;
+      font-size: 13px;
     }
 
     th {
-      background: rgba(234, 244, 237, 0.96);
+      background: rgba(234, 244, 237, 0.94);
       color: var(--green);
     }
 
     td form {
-      min-width: 155px;
+      min-width: 140px;
     }
 
     .inline-form {
       display: flex;
-      gap: 7px;
+      gap: 6px;
       align-items: center;
     }
 
     .inline-form select {
-      min-width: 130px;
+      min-width: 115px;
     }
 
     /* FOOTER */
     .site-footer {
       text-align: center;
-      padding: 18px 15px;
+      padding: 17px 12px;
       color: white;
-      background: rgba(3, 63, 42, 0.82);
+      background: rgba(3, 63, 42, 0.86);
+      backdrop-filter: blur(4px);
+      font-size: 13px;
+      margin-top: 20px;
     }
 
     .site-footer p {
-      margin: 8px 0;
+      margin: 5px 0;
     }
 
     /* TABLET */
     @media (max-width: 800px) {
-      .filter-grid,
+      .container,
+      .hero {
+        width: 92%;
+      }
+
+      .filter-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
       .form-grid,
       .detail-layout {
         grid-template-columns: 1fr;
       }
 
       .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 7px;
+      }
+
+      .stat {
+        padding: 9px;
+        min-height: 78px;
+        font-size: 12px;
+      }
+
+      .stat strong {
+        font-size: 20px;
       }
 
       .brand h1 {
-        font-size: 20px;
+        font-size: 19px;
+      }
+    }
+
+    /* MOBILE */
+    @media (max-width: 520px) {
+      .site-header {
+        padding: 12px 4%;
+      }
+
+      .header-inner {
+        justify-content: center;
+      }
+
+      .brand {
+        width: 100%;
+        justify-content: center;
+      }
+
+      nav {
+        justify-content: center;
+      }
+
+      nav a {
+        font-size: 12px;
+        padding: 7px 9px;
       }
 
       .container,
@@ -477,45 +557,47 @@
       }
 
       .hero {
-        padding: 26px 18px;
+        padding: 21px 14px;
+        margin-top: 16px;
       }
-    }
 
-    /* MOBILE */
-    @media (max-width: 480px) {
+      .hero h2 {
+        font-size: 25px;
+      }
+
+      .hero p {
+        font-size: 13px;
+      }
+
+      .panel {
+        padding: 14px;
+      }
+
+      .filter-grid {
+        grid-template-columns: 1fr;
+      }
+
+      /* Keep all four stat boxes the same size */
       .stats {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 9px;
       }
 
       .stat {
-        padding: 12px;
+        min-height: 82px;
+        padding: 11px;
       }
 
       .stat strong {
-        font-size: 23px;
-      }
-
-      .panel {
-        padding: 17px;
-      }
-
-      .site-header {
-        padding: 15px 4%;
-      }
-
-      .brand img {
-        width: 48px;
-        height: 48px;
-      }
-
-      nav a {
-        font-size: 12px;
-        padding: 8px 10px;
+        font-size: 21px;
       }
 
       .report-grid {
         grid-template-columns: 1fr;
+      }
+
+      .full {
+        grid-column: auto;
       }
     }
   </style>
@@ -527,11 +609,10 @@
   <header class="site-header">
     <div class="header-inner">
       <div class="brand">
-        <img
-          src="{{ campus_logo }}"
-          alt="SLSU JGE logo"
-          onerror="this.style.display='none'"
-        >
+        <img src="{{ campus_logo }}"
+             alt="SLSU JGE logo"
+             onerror="this.style.display='none'">
+
         <div>
           <h1>SLSU JGE FindHub</h1>
           <p>Lost and Found Information System</p>
@@ -554,7 +635,7 @@
 
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-      <div class="container" style="margin-bottom: 0;">
+      <div class="container" style="margin-bottom: 0">
         {% for category, message in messages %}
           <div class="flash {{ category }}">{{ message }}</div>
         {% endfor %}
@@ -574,3 +655,4 @@
   </footer>
 </body>
 </html>
+```
