@@ -1,109 +1,140 @@
 {% extends "base.html" %}
-
-{% block title %}Report an Item | SLSU JGE FindHub{% endblock %}
+{% block title %}Submit a Report | FindHub{% endblock %}
 
 {% block content %}
 <section class="panel">
-  <h1>Report a Lost or Found Item</h1>
+  <div class="sticker-row">
+    <span class="sticker"><span>📝</span>New report</span>
+    <span class="sticker"><span>🤝</span>Help a classmate</span>
+  </div>
 
-  <p class="muted">
-    Please provide accurate details to help the campus community.
+  <h2>📝 Submit a Lost or Found Item</h2>
+  <p class="help">
+    After submitting, your report will be saved and its details page
+    will open. Your contact details stay private unless you choose
+    to display them.
   </p>
 
   <form method="POST" enctype="multipart/form-data">
-    <div class="grid">
+    <div class="form-grid">
       <div>
-        <label for="report_type">Report Type *</label>
+        <label for="report_type">Report type *</label>
         <select id="report_type" name="report_type" required>
-          <option value="">Select type</option>
-          <option value="Lost">Lost Item</option>
-          <option value="Found">Found Item</option>
+          <option value="">Choose Lost or Found</option>
+          <option value="Lost">🔎 I lost an item</option>
+          <option value="Found">✨ I found an item</option>
         </select>
       </div>
 
       <div>
-        <label for="item_name">Item Name *</label>
-        <input id="item_name" name="item_name" required>
+        <label for="item_name">Item name *</label>
+        <input
+          id="item_name"
+          name="item_name"
+          maxlength="120"
+          required
+          placeholder="e.g. Black wallet"
+        >
       </div>
 
       <div>
         <label for="category">Category *</label>
         <select id="category" name="category" required>
-          <option value="">Select category</option>
-          {% for item in categories|default([]) %}
-            <option value="{{ item }}">{{ item }}</option>
+          {% for c in categories %}
+            <option value="{{ c }}" {% if c == 'Other' %}selected{% endif %}>
+              {{ c }}
+            </option>
           {% endfor %}
         </select>
       </div>
 
       <div>
-        <label for="incident_date">Date Lost or Found *</label>
+        <label for="incident_date">Date lost or found *</label>
         <input
           id="incident_date"
-          name="incident_date"
           type="date"
+          name="incident_date"
+          max="{{ today.isoformat() }}"
           required
         >
       </div>
 
-      <div>
-        <label for="location">Location *</label>
+      <div class="full">
+        <label for="location">Location on campus *</label>
         <input
           id="location"
           name="location"
-          placeholder="Building or campus area"
+          maxlength="180"
           required
+          placeholder="e.g. Library, Room 203, canteen"
+        >
+      </div>
+
+      <div class="full">
+        <label for="description">Description and identifying details *</label>
+        <textarea
+          id="description"
+          name="description"
+          maxlength="3000"
+          required
+          placeholder="Describe the item, color, brand, or where it was found."
+        ></textarea>
+      </div>
+
+      <div>
+        <label for="contact_name">Your name</label>
+        <input
+          id="contact_name"
+          name="contact_name"
+          maxlength="120"
+          placeholder="Your name"
         >
       </div>
 
       <div>
-        <label for="contact_name">Your Name *</label>
-        <input id="contact_name" name="contact_name" required>
-      </div>
-
-      <div>
-        <label for="contact">Contact Information *</label>
+        <label for="contact">Private contact method *</label>
         <input
           id="contact"
           name="contact"
-          placeholder="Email or phone number"
+          maxlength="180"
           required
+          placeholder="Email, phone, or Messenger name"
         >
       </div>
 
-      <div>
-        <label for="photo">Item Photo (Optional)</label>
+      <div class="full">
+        <label for="photo">Item photo (optional, max 5 MB)</label>
         <input
           id="photo"
-          name="photo"
           type="file"
-          accept="image/*"
+          name="photo"
+          accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
         >
-        <small class="muted">Maximum upload size: 5 MB.</small>
+      </div>
+
+      <div class="full">
+        <label style="display:flex;gap:10px;align-items:flex-start;font-weight:normal">
+          <input
+            type="checkbox"
+            name="contact_public"
+            value="yes"
+            style="width:auto;margin-top:3px"
+          >
+          <span>
+            Display my name and contact method publicly. Leave unchecked
+            to keep them private.
+          </span>
+        </label>
       </div>
     </div>
 
-    <label for="description">Description *</label>
-    <textarea
-      id="description"
-      name="description"
-      placeholder="Describe the item and any identifying features."
-      required
-    ></textarea>
+    <p class="help">
+      Fields marked * are required. Avoid sharing highly sensitive information.
+    </p>
 
-    <label>
-      <input
-        style="width:auto"
-        type="checkbox"
-        name="contact_public"
-        value="yes"
-      >
-      Allow my contact information to be displayed publicly
-    </label>
-
-    <div class="actions">
-      <button type="submit">Submit Report</button>
-      <a class="btn secondary" href="{{ url_for('home') }}">Cancel</a>
+    <div class="card-actions">
+      <button type="submit">🚀 Submit Report</button>
+      <a class="button secondary" href="{{ url_for('home') }}">Cancel</a>
     </div>
   </form>
 </section>
