@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Login | SLSU JGE FindHub{% endblock %}
+
+{% block content %}
+<section class="panel" style="max-width:520px; margin:30px auto;">
+  <h1>Administrator Login</h1>
+
+  <p class="muted">
+    Sign in to manage reports and claims.
+  </p>
+
+  <form method="POST">
+    <label for="username">Username</label>
+    <input
+      id="username"
+      name="username"
+      autocomplete="username"
+      required
+    >
+
+    <label for="password">Password</label>
+    <input
+      id="password"
+      name="password"
+      type="password"
+      autocomplete="current-password"
+      required
+    >
+
+    <div class="actions">
+      <button type="submit">Log In</button>
+      <a class="btn secondary" href="{{ url_for('home') }}">Cancel</a>
+    </div>
+  </form>
+</section>
+{% endblock %}
