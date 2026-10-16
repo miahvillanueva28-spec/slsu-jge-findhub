@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Claims | SLSU JGE FindHub{% endblock %}
+
+{% block content %}
+<section class="panel">
+  <h1>Claims Management</h1>
+
+  <p>
+    <a href="{{ url_for('admin_dashboard') }}">
+      ← Back to Admin Dashboard
+    </a>
+  </p>
+
+  {% if claims %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Report</th>
+            <th>Claimant</th>
+            <th>Contact</th>
+            <th>Claim Details</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for claim in claims %}
+            <tr>
+              <td>
+                {% if claim.report %}
+                  <a href="{{ url_for('report_detail', report_id=claim.report.id) }}">
+                    {{ claim.report.item_name }}
+                  </a>
+                  <br>
+                  <small>Report #{{ claim.report.id }}</small>
+                {% else %}
+                  Report unavailable
+                {% endif %}
+              </td>
+
+              <td>{{ claim.claimant_name }}</td>
+
+              <td>{{ claim.claimant_contact }}</td>
+
+              <td>{{ claim.claim_message }}</td>
+
+              <td>
+                <form
+                  method="POST"
+                  action="{{ url_for('update_claim_status', claim_id=claim.id) }}"
+                >
+                  <select name="status" aria-label="Claim status">
+                    {% for option in ['Pending', 'Approved', 'Rejected', 'Resolved'] %}
+                      <option
+                        value="{{ option }}"
+                        {% if claim.status|string|lower == option|lower %}
+                          selected
+                        {% endif %}
+                      >
+                        {{ option }}
+                      </option>
+                    {% endfor %}
+                  </select>
+
+                  <button type="submit" style="margin-top:6px;">
+                    Update
+                  </button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p>No claims have been submitted yet.</p>
+  {% endif %}
+</section>
+{% endblock %}
