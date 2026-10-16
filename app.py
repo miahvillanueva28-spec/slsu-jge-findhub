@@ -1,261 +1,145 @@
+import csv
+import io
 import os
 import secrets
-from pathlib import Path
 from datetime import date, datetime
 from functools import wraps
+from pathlib import Path
 
 from flask import (
-    Flask, request, redirect, url_for, session,
-    flash, render_template_string, send_from_directory, abort
+    Flask, abort, flash, make_response, redirect, render_template,
+    request, send_from_directory, session, url_for
 )
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 
-# ---------- CONFIGURATION ----------
+# ---------------- CONFIGURATION ----------------
 
-DATA_DIR = Path(os.environ.get("DATA_DIR", "data"))
+BASE_DIR = Path(__file__).resolve().parent
+DATA_DIR = Path(os.environ.get("DATA_DIR", "/tmp/slsu_findhub"))
 UPLOAD_DIR = DATA_DIR / "uploads"
+
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", secrets.token_hex(32))
+
+app.config["SECRET_KEY"] = (
+    os.environ.get("SECRET_KEY") or secrets.token_hex(32)
+)
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "sqlite:///" + str((DATA_DIR / "lost_found.db").resolve())
+    "sqlite:///" + str((DATA_DIR / "findhub.db").resolve())
 )
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+app.config["PERMANENT_SESSION_LIFETIME"] = 60 * 60 * 8
 
 db = SQLAlchemy(app)
+
 ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
+REPORT_TYPES = {"Lost", "Found"}
+REPORT_STATUSES = {"Open", "Pending Claim", "Returned", "Archived"}
+
+CATEGORIES = [
+    "ID / School Card",
+    "Wallet / Money",
+    "Phone / Gadget",
+    "Keys",
+    "Bag",
+    "Clothing",
+    "Books / Notes",
+    "Other",
+]
+
+# Official SLSU JGE campus images
+CAMPUS_LOGO = (
+    "https://www.slsu.edu.ph/wp-content/uploads/2023/05/"
+    "Campuses/Campus-Logo/SLSU-JGE-Logo.png"
+)
+
+CAMPUS_PHOTO = (
+    "https://www.slsu.edu.ph/wp-content/uploads/2023/05/"
+    "Campuses/SLSU%20JGE%20Tagkawayan/JGE%20bldg.jpg"
+)
 
 
-# ---------- DATABASE ----------
+# ---------------- DATABASE MODELS ----------------
 
 class Report(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+
     report_type = db.Column(db.String(10), nullable=False)
     item_name = db.Column(db.String(120), nullable=False)
+    category = db.Column(db.String(60), nullable=False, default="Other")
     description = db.Column(db.Text, nullable=False)
     location = db.Column(db.String(180), nullable=False)
     incident_date = db.Column(db.String(10), nullable=False)
-    contact = db.Column(db.String(160))
+
+    contact_name = db.Column(db.String(120))
+    contact = db.Column(db.String(180))
+    contact_public = db.Column(
+        db.Boolean, default=False, nullable=False
+    )
+
     photo = db.Column(db.String(255))
-    status = db.Column(db.String(20), default="Open", nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    status = db.Column(db.String(30), default="Open", nullable=False)
+    created_at = db.Column(
+        db.DateTime, default=datetime.utcnow, nullable=False
+    )
 
 
+class Claim(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    report_id = db.Column(
+        db.Integer,
+        db.ForeignKey("report.id"),
+        nullable=False
+    )
+
+    claimant_name = db.Column(db.String(120), nullable=False)
+    student_or_staff_id = db.Column(db.String(80))
+    contact = db.Column(db.String(180), nullable=False)
+    proof = db.Column(db.Text, nullable=False)
+
+    status = db.Column(db.String(20), default="Pending", nullable=False)
+    created_at = db.Column(
+        db.DateTime, default=datetime.utcnow, nullable=False
+    )
+
+    report = db.relationship(
+        "Report",
+        backref=db.backref(
+            "claims",
+            lazy=True,
+            cascade="all, delete-orphan"
+        )
+    )
+
+
+# Create database tables when the application starts.
 with app.app_context():
     db.create_all()
 
 
-# ---------- DESIGN ----------
+# ---------------- HELPER FUNCTIONS ----------------
 
-STYLE = """
-*{box-sizing:border-box}
-body{margin:0;background:#f2f5f9;color:#172b40;
-font-family:Arial,sans-serif;line-height:1.5}
-header{background:#123b63;color:white;padding:18px}
-nav,main{max-width:1100px;margin:auto}
-nav{display:flex;justify-content:space-between;align-items:center;
-gap:15px;flex-wrap:wrap}
-nav a{color:white;text-decoration:none;font-weight:bold;margin-left:12px}
-.brand{font-size:19px;font-weight:bold}
-.sub{font-size:12px;color:#dbe9f6}
-main{padding:24px 15px}
-.hero,.panel,.card{background:white;border:1px solid #dce5ed;
-border-radius:14px;overflow:hidden}
-.hero,.panel{padding:22px;margin-bottom:22px}
-h1,h2,h3{color:#153d65}
-.hero h1{font-size:32px;margin-top:0}
-.btn{display:inline-block;padding:10px 15px;border:0;border-radius:7px;
-background:#205b91;color:white;text-decoration:none;cursor:pointer;
-font-weight:bold}
-.gold{background:#e4b547;color:#172b40}
-.red{background:#b32d37}
-input,select,textarea{width:100%;padding:11px;border:1px solid #ccd7e1;
-border-radius:7px;font:inherit;margin:5px 0 15px}
-textarea{min-height:100px}
-label{font-weight:bold;font-size:14px}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
-.card img{width:100%;height:190px;object-fit:cover}
-.cardbody{padding:15px;overflow-wrap:anywhere}
-.tag{display:inline-block;background:#e3eef9;color:#205b91;
-padding:4px 9px;border-radius:20px;font-size:12px;font-weight:bold}
-.found{background:#e1f5e7;color:#23643a}
-.muted{color:#687789;font-size:13px}
-.flash{padding:12px;background:#e0f5e5;border-radius:7px;margin-bottom:12px}
-.empty{padding:30px;background:white;border-radius:12px;text-align:center}
-.filters{display:grid;grid-template-columns:1fr 1fr 2fr auto;gap:10px}
-footer{text-align:center;color:#667789;padding:25px;font-size:12px}
-@media(max-width:750px){.grid{grid-template-columns:repeat(2,1fr)}
-.filters{grid-template-columns:1fr 1fr}}
-@media(max-width:500px){.grid,.filters{grid-template-columns:1fr}
-.hero h1{font-size:26px}nav a{margin-left:0}}
-"""
-
-def page(title, content, **values):
-    template = """
-    <!DOCTYPE html><html lang="en"><head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ title }} | SLSU JGE Lost and Found</title>
-    <style>""" + STYLE + """</style></head><body>
-    <header><nav>
-    <div><div class="brand">SLSU JGE LOST & FOUND</div>
-    <div class="sub">Tagkawayan Campus • Students and Staff</div></div>
-    <div><a href="{{ url_for('home') }}">Home</a>
-    <a href="{{ url_for('new_report') }}">Post Report</a>
-    <a href="{{ url_for('admin_login') }}">Admin</a></div>
-    </nav></header><main>
-    {% with messages = get_flashed_messages() %}
-    {% for message in messages %}<div class="flash">{{ message }}</div>
-    {% endfor %}{% endwith %}
-    """ + content + """
-    </main><footer>SLSU JGE Tagkawayan Campus Lost and Found
-    <br>Do not publish passwords or sensitive personal information.</footer>
-    </body></html>
-    """
-    return render_template_string(template, title=title, **values)
-
-
-# ---------- ADMIN PROTECTION ----------
-
-def admin_required(function):
-    @wraps(function)
-    def wrapper(*args, **kwargs):
-        if not session.get("admin"):
-            flash("Please log in as administrator.")
+def admin_required(view):
+    @wraps(view)
+    def wrapped(*args, **kwargs):
+        if not session.get("is_admin"):
+            flash(
+                "Please log in to access the admin area.",
+                "warning"
+            )
             return redirect(url_for("admin_login"))
-        return function(*args, **kwargs)
-    return wrapper
 
+        return view(*args, **kwargs)
 
-# ---------- HOME PAGE ----------
+    return wrapped
 
-HOME = """
-<section class="hero">
-<h1>Lost something? Found an item?</h1>
-<p>Help reunite lost belongings with their owners at Southern Luzon
-State University, Judge Guillermo Eleazar (JGE), Tagkawayan Campus.</p>
-<a class="btn gold" href="{{ url_for('new_report') }}">+ Post Lost or Found Item</a>
-<p class="muted">No student or staff account is required.</p>
-</section>
-
-<h2>Browse Reports</h2>
-<form method="get" class="filters">
-<div><label>Type</label><select name="type">
-<option value="">All</option>
-<option value="Lost" {% if kind == 'Lost' %}selected{% endif %}>Lost</option>
-<option value="Found" {% if kind == 'Found' %}selected{% endif %}>Found</option>
-</select></div>
-<div><label>Status</label><select name="status">
-<option value="">All</option>
-<option value="Open" {% if status == 'Open' %}selected{% endif %}>Open</option>
-<option value="Resolved" {% if status == 'Resolved' %}selected{% endif %}>Resolved</option>
-</select></div>
-<div><label>Search item or location</label>
-<input name="q" value="{{ q }}" placeholder="e.g. wallet, library"></div>
-<div><label>&nbsp;</label><button class="btn">Search</button></div>
-</form>
-
-{% if reports %}
-<div class="grid">
-{% for r in reports %}
-<article class="card">
-{% if r.photo %}
-<img src="{{ url_for('photo', filename=r.photo) }}" alt="Item photo">
-{% endif %}
-<div class="cardbody">
-<span class="tag {% if r.report_type == 'Found' %}found{% endif %}">
-{{ r.report_type }}</span>
-<span class="tag">{{ r.status }}</span>
-<h3>{{ r.item_name }}</h3>
-<p>{{ r.description }}</p>
-<p><b>Location:</b> {{ r.location }}</p>
-<p><b>Date:</b> {{ r.incident_date }}</p>
-{% if r.contact %}<p><b>Contact:</b> {{ r.contact }}</p>{% endif %}
-<p class="muted">Posted {{ r.created_at.strftime('%b %d, %Y') }}</p>
-</div></article>
-{% endfor %}
-</div>
-{% else %}
-<div class="empty">No matching reports yet.</div>
-{% endif %}
-"""
-
-@app.route("/")
-def home():
-    query = Report.query
-
-    kind = request.args.get("type", "")
-    status = request.args.get("status", "")
-    q = request.args.get("q", "").strip()
-
-    if kind in ("Lost", "Found"):
-        query = query.filter_by(report_type=kind)
-
-    if status in ("Open", "Resolved"):
-        query = query.filter_by(status=status)
-
-    if q:
-        term = f"%{q}%"
-        query = query.filter(db.or_(
-            Report.item_name.ilike(term),
-            Report.location.ilike(term),
-            Report.description.ilike(term)
-        ))
-
-    reports = query.order_by(Report.created_at.desc()).all()
-
-    return page("Home", HOME, reports=reports, kind=kind,
-                status=status, q=q)
-
-
-# ---------- POST A REPORT ----------
-
-FORM = """
-<section class="panel">
-<h2>Submit a Lost or Found Report</h2>
-<p class="muted">Fields marked * are required.</p>
-<form method="post" enctype="multipart/form-data">
-<label>Report Type *</label>
-<select name="report_type" required>
-<option value="">Select</option>
-<option value="Lost">I lost an item</option>
-<option value="Found">I found an item</option>
-</select>
-
-<label>Item Name *</label>
-<input name="item_name" maxlength="120" required
-placeholder="Example: black wallet">
-
-<label>Description *</label>
-<textarea name="description" maxlength="2000" required
-placeholder="Describe the item and its appearance"></textarea>
-
-<label>Where was it lost or found? *</label>
-<input name="location" maxlength="180" required
-placeholder="Example: library, classroom, canteen">
-
-<label>Date Lost or Found *</label>
-<input name="incident_date" type="date" max="{{ today }}" required>
-
-<label>Contact Information (optional)</label>
-<input name="contact" maxlength="160"
-placeholder="School email or preferred contact method">
-<p class="muted">Contact information will be visible publicly.</p>
-
-<label>Upload Item Photo (optional)</label>
-<input type="file" name="photo"
-accept=".jpg,.jpeg,.png,.webp" >
-<p class="muted">JPG, PNG, or WEBP. Maximum 5 MB.</p>
-
-<button class="btn gold" type="submit">Submit Report</button>
-<a class="btn" href="{{ url_for('home') }}">Cancel</a>
-</form></section>
-"""
 
 def allowed_file(filename):
     return (
@@ -263,187 +147,355 @@ def allowed_file(filename):
         and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
     )
 
+
+def common_context():
+    return {
+        "campus_logo": CAMPUS_LOGO,
+        "campus_photo": CAMPUS_PHOTO,
+        "today": date.today().isoformat(),
+        "admin_logged_in": bool(session.get("is_admin")),
+    }
+
+
+@app.context_processor
+def inject_globals():
+    return common_context()
+
+
+# ---------------- PUBLIC HOME PAGE ----------------
+
+@app.route("/")
+def home():
+    query = Report.query.filter(Report.status != "Archived")
+
+    kind = request.args.get("type", "").strip()
+    category = request.args.get("category", "").strip()
+    status = request.args.get("status", "").strip()
+    search = request.args.get("q", "").strip()
+
+    if kind in REPORT_TYPES:
+        query = query.filter_by(report_type=kind)
+
+    if category in CATEGORIES:
+        query = query.filter_by(category=category)
+
+    if status in {"Open", "Pending Claim", "Returned"}:
+        query = query.filter_by(status=status)
+
+    if search:
+        term = f"%{search}%"
+        query = query.filter(
+            db.or_(
+                Report.item_name.ilike(term),
+                Report.description.ilike(term),
+                Report.location.ilike(term),
+                Report.category.ilike(term),
+            )
+        )
+
+    reports = query.order_by(Report.created_at.desc()).all()
+
+    total_open = Report.query.filter_by(status="Open").count()
+
+    total_found = (
+        Report.query
+        .filter_by(report_type="Found")
+        .filter(Report.status != "Archived")
+        .count()
+    )
+
+    total_lost = (
+        Report.query
+        .filter_by(report_type="Lost")
+        .filter(Report.status != "Archived")
+        .count()
+    )
+
+    return render_template(
+        "home.html",
+        reports=reports,
+        kind=kind,
+        category=category,
+        status=status,
+        q=search,
+        total_open=total_open,
+        total_found=total_found,
+        total_lost=total_lost,
+        categories=CATEGORIES,
+    )
+
+
+# ---------------- CREATE A LOST / FOUND REPORT ----------------
+
 @app.route("/report/new", methods=["GET", "POST"])
 def new_report():
     if request.method == "POST":
         kind = request.form.get("report_type", "")
         name = request.form.get("item_name", "").strip()
+        category = request.form.get("category", "Other")
         description = request.form.get("description", "").strip()
         location = request.form.get("location", "").strip()
         incident_date = request.form.get("incident_date", "")
-        contact = request.form.get("contact", "").strip()
 
-        if not all([kind, name, description, location, incident_date]):
-            flash("Please complete all required fields.")
+        contact_name = request.form.get("contact_name", "").strip()
+        contact = request.form.get("contact", "").strip()
+        contact_public = (
+            request.form.get("contact_public") == "yes"
+        )
+
+        if not all([
+            kind, name, description, location,
+            incident_date, contact
+        ]):
+            flash(
+                "Please complete all required fields, including "
+                "a private contact method.",
+                "warning"
+            )
             return redirect(url_for("new_report"))
 
-        if kind not in ("Lost", "Found"):
+        if kind not in REPORT_TYPES or category not in CATEGORIES:
             abort(400)
 
         try:
-            parsed_date = date.fromisoformat(incident_date)
-            if parsed_date > date.today():
+            parsed = date.fromisoformat(incident_date)
+
+            if parsed > date.today():
                 raise ValueError
+
         except ValueError:
-            flash("Please enter a valid date that is not in the future.")
+            flash(
+                "Please choose a valid date that is not in the future.",
+                "warning"
+            )
             return redirect(url_for("new_report"))
 
-        filename = None
-        uploaded = request.files.get("photo")
+        photo_name = None
+        upload = request.files.get("photo")
 
-        if uploaded and uploaded.filename:
-            if not allowed_file(uploaded.filename):
-                flash("Only JPG, JPEG, PNG, and WEBP images are allowed.")
+        if upload and upload.filename:
+            if not allowed_file(upload.filename):
+                flash(
+                    "Photo must be JPG, JPEG, PNG, or WEBP.",
+                    "warning"
+                )
                 return redirect(url_for("new_report"))
 
-            secure_filename(uploaded.filename)
-            extension = uploaded.filename.rsplit(".", 1)[1].lower()
-            filename = secrets.token_hex(16) + "." + extension
-            uploaded.save(UPLOAD_DIR / filename)
+            safe = secure_filename(upload.filename)
+            extension = safe.rsplit(".", 1)[1].lower()
+            photo_name = f"{secrets.token_hex(16)}.{extension}"
+
+            upload.save(UPLOAD_DIR / photo_name)
 
         report = Report(
             report_type=kind,
             item_name=name[:120],
-            description=description[:2000],
+            category=category,
+            description=description[:3000],
             location=location[:180],
             incident_date=incident_date,
-            contact=contact[:160] or None,
-            photo=filename
+            contact_name=contact_name[:120] or None,
+            contact=contact[:180],
+            contact_public=contact_public,
+            photo=photo_name,
         )
 
         db.session.add(report)
         db.session.commit()
 
-        flash("Your report has been submitted successfully!")
-        return redirect(url_for("home"))
+        flash(
+            "Your report is live. Thank you for helping "
+            "the JGE community!",
+            "success"
+        )
 
-    return page("Post Report", FORM, today=date.today().isoformat())
+        return redirect(
+            url_for("report_detail", report_id=report.id)
+        )
+
+    return render_template(
+        "report_form.html",
+        categories=CATEGORIES
+    )
 
 
-# ---------- SERVE PHOTOS ----------
+# ---------------- VIEW A REPORT ----------------
+
+@app.route("/report/<int:report_id>")
+def report_detail(report_id):
+    report = db.get_or_404(Report, report_id)
+
+    if report.status == "Archived":
+        abort(404)
+
+    return render_template(
+        "report_detail.html",
+        report=report
+    )
+
+
+# ---------------- SUBMIT A CLAIM ----------------
+
+@app.route("/report/<int:report_id>/claim", methods=["POST"])
+def submit_claim(report_id):
+    report = db.get_or_404(Report, report_id)
+
+    if report.status in {"Returned", "Archived"}:
+        flash(
+            "This report is no longer accepting claim requests.",
+            "warning"
+        )
+        return redirect(
+            url_for("report_detail", report_id=report.id)
+        )
+
+    name = request.form.get("claimant_name", "").strip()
+    student_id = request.form.get(
+        "student_or_staff_id", ""
+    ).strip()
+    contact = request.form.get("contact", "").strip()
+    proof = request.form.get("proof", "").strip()
+
+    if not all([name, contact, proof]):
+        flash(
+            "Please complete your name, contact method, "
+            "and proof of ownership.",
+            "warning"
+        )
+        return redirect(
+            url_for("report_detail", report_id=report.id)
+        )
+
+    claim = Claim(
+        report_id=report.id,
+        claimant_name=name[:120],
+        student_or_staff_id=student_id[:80] or None,
+        contact=contact[:180],
+        proof=proof[:2000],
+    )
+
+    report.status = "Pending Claim"
+
+    db.session.add(claim)
+    db.session.commit()
+
+    flash(
+        "Claim request submitted privately to the administrator "
+        "for verification.",
+        "success"
+    )
+
+    return redirect(
+        url_for("report_detail", report_id=report.id)
+    )
+
+
+# ---------------- SERVE UPLOADED PHOTOS ----------------
 
 @app.route("/uploads/<path:filename>")
-def photo(filename):
+def uploaded_photo(filename):
     if not Report.query.filter_by(photo=filename).first():
         abort(404)
+
     return send_from_directory(str(UPLOAD_DIR), filename)
 
 
-# ---------- ADMIN LOGIN ----------
-
-LOGIN = """
-<section class="panel">
-<h2>Administrator Login</h2>
-<form method="post">
-<label>Username</label>
-<input name="username" required autocomplete="username">
-<label>Password</label>
-<input name="password" type="password" required
-autocomplete="current-password">
-<button class="btn" type="submit">Log In</button>
-</form>
-<p class="muted">Set ADMIN_USERNAME and ADMIN_PASSWORD_HASH
-in Render Environment Variables.</p>
-</section>
-"""
+# ---------------- ADMIN LOGIN ----------------
 
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
-    if session.get("admin"):
-        return redirect(url_for("dashboard"))
+    if session.get("is_admin"):
+        return redirect(url_for("admin_dashboard"))
 
     if request.method == "POST":
-        username = os.environ.get("ADMIN_USERNAME", "")
-        password_hash = os.environ.get("ADMIN_PASSWORD_HASH", "")
-        entered_user = request.form.get("username", "")
-        entered_password = request.form.get("password", "")
+        configured_user = os.environ.get("ADMIN_USERNAME", "")
+        configured_password = os.environ.get("ADMIN_PASSWORD", "")
+
+        username = request.form.get("username", "")
+        password = request.form.get("password", "")
 
         if (
-            username
-            and password_hash
-            and secrets.compare_digest(entered_user, username)
+            configured_user
+            and configured_password
+            and secrets.compare_digest(username, configured_user)
+            and secrets.compare_digest(password, configured_password)
         ):
-            try:
-                valid = check_password_hash(password_hash, entered_password)
-            except (ValueError, TypeError):
-                valid = False
+            session.clear()
+            session["is_admin"] = True
+            session.permanent = True
 
-            if valid:
-                session.clear()
-                session["admin"] = True
-                session.permanent = True
-                return redirect(url_for("dashboard"))
+            return redirect(url_for("admin_dashboard"))
 
-        flash("Invalid login or admin credentials are not configured.")
+        flash(
+            "Login failed. Check your credentials and Render "
+            "Environment Variables.",
+            "danger"
+        )
 
-    return page("Admin Login", LOGIN)
+    return render_template("admin_login.html")
 
 
-# ---------- ADMIN DASHBOARD ----------
-
-DASHBOARD = """
-<h2>Administrator Dashboard</h2>
-<p>Only the administrator can update or delete reports.</p>
-<p><a class="btn" href="{{ url_for('logout') }}">Log Out</a></p>
-
-{% if reports %}
-<div class="grid">
-{% for r in reports %}
-<article class="card">
-{% if r.photo %}
-<img src="{{ url_for('photo', filename=r.photo) }}" alt="Item photo">
-{% endif %}
-<div class="cardbody">
-<span class="tag">{{ r.report_type }}</span>
-<h3>{{ r.item_name }}</h3>
-<p>{{ r.description }}</p>
-<p><b>Location:</b> {{ r.location }}</p>
-<p><b>Date:</b> {{ r.incident_date }}</p>
-<p><b>Contact:</b> {{ r.contact or 'Not provided' }}</p>
-
-<form method="post" action="{{ url_for('update_status', report_id=r.id) }}">
-<label>Status</label>
-<select name="status">
-<option value="Open" {% if r.status == 'Open' %}selected{% endif %}>Open</option>
-<option value="Resolved" {% if r.status == 'Resolved' %}selected{% endif %}>Resolved / Returned</option>
-</select>
-<button class="btn" type="submit">Update Status</button>
-</form>
-
-<form method="post" action="{{ url_for('delete_report', report_id=r.id) }}"
-onsubmit="return confirm('Permanently delete this report?')">
-<button class="btn red" type="submit">Delete Report</button>
-</form>
-</div></article>
-{% endfor %}
-</div>
-{% else %}
-<div class="empty">No reports submitted yet.</div>
-{% endif %}
-"""
+# ---------------- ADMIN DASHBOARD ----------------
 
 @app.route("/admin")
 @admin_required
-def dashboard():
-    reports = Report.query.order_by(Report.created_at.desc()).all()
-    return page("Admin Dashboard", DASHBOARD, reports=reports)
+def admin_dashboard():
+    reports = Report.query.order_by(
+        Report.created_at.desc()
+    ).all()
+
+    claims = Claim.query.order_by(
+        Claim.created_at.desc()
+    ).limit(6).all()
+
+    stats = {
+        "all": Report.query.count(),
+        "open": Report.query.filter_by(status="Open").count(),
+        "claims": Claim.query.filter_by(status="Pending").count(),
+        "returned": Report.query.filter_by(status="Returned").count(),
+    }
+
+    return render_template(
+        "admin_dashboard.html",
+        reports=reports,
+        claims=claims,
+        stats=stats
+    )
 
 
-@app.route("/admin/status/<int:report_id>", methods=["POST"])
+# ---------------- UPDATE REPORT STATUS ----------------
+
+@app.route(
+    "/admin/report/<int:report_id>/status",
+    methods=["POST"]
+)
 @admin_required
-def update_status(report_id):
+def update_report_status(report_id):
     report = db.get_or_404(Report, report_id)
-    status = request.form.get("status")
+    status = request.form.get("status", "")
 
-    if status in ("Open", "Resolved"):
-        report.status = status
-        db.session.commit()
-        flash("Report status updated.")
+    if status not in REPORT_STATUSES:
+        abort(400)
 
-    return redirect(url_for("dashboard"))
+    report.status = status
+    db.session.commit()
+
+    flash(
+        f"Report #{report.id} status updated.",
+        "success"
+    )
+
+    return redirect(
+        request.referrer or url_for("admin_dashboard")
+    )
 
 
-@app.route("/admin/delete/<int:report_id>", methods=["POST"])
+# ---------------- DELETE A REPORT ----------------
+
+@app.route(
+    "/admin/report/<int:report_id>/delete",
+    methods=["POST"]
+)
 @admin_required
 def delete_report(report_id):
     report = db.get_or_404(Report, report_id)
@@ -456,28 +508,145 @@ def delete_report(report_id):
 
     db.session.delete(report)
     db.session.commit()
-    flash("Report deleted by administrator.")
-    return redirect(url_for("dashboard"))
 
+    flash(
+        "Report and its claim requests deleted.",
+        "success"
+    )
+
+    return redirect(url_for("admin_dashboard"))
+
+
+# ---------------- ADMIN CLAIMS PAGE ----------------
+
+@app.route("/admin/claims")
+@admin_required
+def admin_claims():
+    claims = Claim.query.order_by(
+        Claim.created_at.desc()
+    ).all()
+
+    return render_template(
+        "admin_claims.html",
+        claims=claims
+    )
+
+
+# ---------------- REVIEW A CLAIM ----------------
+
+@app.route(
+    "/admin/claim/<int:claim_id>/status",
+    methods=["POST"]
+)
+@admin_required
+def update_claim_status(claim_id):
+    claim = db.get_or_404(Claim, claim_id)
+    status = request.form.get("status", "")
+
+    if status not in {"Pending", "Approved", "Rejected"}:
+        abort(400)
+
+    claim.status = status
+
+    if status == "Approved":
+        claim.report.status = "Returned"
+
+    elif claim.report.status == "Pending Claim":
+        claim.report.status = "Open"
+
+    db.session.commit()
+
+    flash("Claim request updated.", "success")
+
+    return redirect(url_for("admin_claims"))
+
+
+# ---------------- EXPORT REPORTS TO CSV ----------------
+
+@app.route("/admin/export.csv")
+@admin_required
+def export_csv():
+    output = io.StringIO()
+    writer = csv.writer(output)
+
+    writer.writerow([
+        "ID",
+        "Type",
+        "Item",
+        "Category",
+        "Description",
+        "Location",
+        "Date",
+        "Status",
+        "Reporter",
+        "Private Contact",
+        "Created At",
+    ])
+
+    for report in Report.query.order_by(
+        Report.created_at.desc()
+    ).all():
+        writer.writerow([
+            report.id,
+            report.report_type,
+            report.item_name,
+            report.category,
+            report.description,
+            report.location,
+            report.incident_date,
+            report.status,
+            report.contact_name or "",
+            report.contact or "",
+            report.created_at.isoformat(),
+        ])
+
+    response = make_response(output.getvalue())
+    response.headers["Content-Type"] = "text/csv; charset=utf-8"
+    response.headers["Content-Disposition"] = (
+        "attachment; filename=slsu_jge_findhub_reports.csv"
+    )
+
+    return response
+
+
+# ---------------- ADMIN LOGOUT ----------------
 
 @app.route("/admin/logout")
-def logout():
+def admin_logout():
     session.clear()
+
+    flash("You have been logged out.", "success")
+
     return redirect(url_for("home"))
 
 
-@app.errorhandler(413)
-def file_too_large(error):
-    return "Image exceeds 5 MB. Please upload a smaller image.", 413
+# ---------------- ERROR HANDLING ----------------
 
+@app.errorhandler(413)
+def too_large(_error):
+    return (
+        "Photo is too large. Please upload an image under 5 MB.",
+        413
+    )
+
+
+# ---------------- SECURITY HEADERS ----------------
 
 @app.after_request
 def security_headers(response):
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "SAMEORIGIN"
-    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Referrer-Policy"] = (
+        "strict-origin-when-cross-origin"
+    )
+    response.headers["Permissions-Policy"] = (
+        "camera=(), microphone=(), geolocation=()"
+    )
+
     return response
 
+
+# ---------------- START APPLICATION ----------------
 
 if __name__ == "__main__":
     app.run(
