@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}SLSU JGE FindHub{% endblock %}</title>
+
+  <style>
+    :root {
+      --green: #075c3b;
+      --deep: #063f2a;
+      --bright: #087647;
+      --ink: #24332b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(rgba(3,35,23,.68), rgba(3,35,23,.72)),
+        url("{{ campus_photo }}") center/cover fixed no-repeat;
+    }
+
+    a { color: var(--green); }
+
+    .site-header {
+      background: rgba(5,75,47,.96);
+      color: white;
+      padding: 18px 5%;
+      box-shadow: 0 4px 16px #0003;
+    }
+
+    .header-inner {
+      max-width: 1250px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
+    .brand img {
+      width: 58px;
+      height: 58px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: white;
+      padding: 4px;
+    }
+
+    .brand h1 { margin: 0 0 5px; font-size: 24px; }
+    .brand p { margin: 0; font-size: 13px; }
+
+    nav { display: flex; gap: 9px; flex-wrap: wrap; }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 14px;
+      padding: 10px 13px;
+      border: 1px solid #ffffff8c;
+      border-radius: 8px;
+    }
+
+    nav a:hover { background: white; color: var(--green); }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 30px auto 45px;
+    }
+
+    .panel {
+      background: #fffffff5;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 8px 28px #0003;
+      margin-bottom: 24px;
+    }
+
+    .hero {
+      max-width: 1250px;
+      width: 90%;
+      margin: 30px auto 24px;
+      background: #e5f4e9f5;
+      border-radius: 18px;
+      padding: 42px 24px;
+      text-align: center;
+      box-shadow: 0 8px 28px #0003;
+    }
+
+    .hero h2 {
+      color: var(--green);
+      font-size: clamp(28px, 4vw, 42px);
+      margin: 0 0 12px;
+    }
+
+    .hero p {
+      max-width: 720px;
+      line-height: 1.7;
+      margin: 0 auto 20px;
+    }
+
+    .button, button {
+      display: inline-block;
+      border: 0;
+      border-radius: 8px;
+      background: var(--bright);
+      color: white;
+      padding: 11px 16px;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .button:hover, button:hover {
+      background: var(--deep);
+      color: white;
+    }
+
+    .secondary { background: #66766c !important; }
+    .danger { background: #b42332 !important; }
+    .small { padding: 8px 10px; font-size: 12px; }
+
+    .sticker-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 0 0 20px;
+    }
+
+    .sticker {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      background: white;
+      border: 2px solid #d6e9db;
+      box-shadow: 2px 4px 0 #075c3b20;
+      font-weight: bold;
+      color: var(--green);
+    }
+
+    .sticker span { font-size: 20px; }
+
+    .flash {
+      border-radius: 9px;
+      padding: 13px 16px;
+      margin: 0 0 12px;
+      background: #d8f3df;
+      color: #155c2e;
+      border-left: 5px solid #198754;
+    }
+
+    .flash.warning {
+      background: #fff0c2;
+      color: #795500;
+      border-color: #d49b00;
+    }
+
+    .flash.danger, .flash.error {
+      background: #f8d7da;
+      color: #842029;
+      border-color: #b42332;
+    }
+
+    h2, h3 { color: var(--green); }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin: 12px 0 6px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #c8d5cc;
+      border-radius: 8px;
+      font: inherit;
+      background: white;
+      color: #24332b;
+    }
+
+    textarea { min-height: 115px; resize: vertical; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0 18px;
+    }
+
+    .full { grid-column: 1 / -1; }
+
+    .help {
+      color: #5c6b61;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .filter-grid {
+      display: grid;
+      grid-template-columns: 2fr repeat(3, minmax(140px, 1fr));
+      gap: 12px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .stat {
+      background: #eef7f0;
+      border: 1px solid #d5e8da;
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .stat strong {
+      display: block;
+      color: var(--green);
+      font-size: 27px;
+      margin-top: 6px;
+    }
+
+    .report-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .report-card {
+      overflow: hidden;
+      border-radius: 14px;
+      background: #fffffffA;
+      box-shadow: 0 7px 20px #0003;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .report-photo, .placeholder-photo {
+      width: 100%;
+      height: 205px;
+      object-fit: cover;
+      background: #e8eee9;
+    }
+
+    .placeholder-photo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 54px;
+    }
+
+    .report-content {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .report-content h3 { margin: 11px 0; }
+
+    .report-content p {
+      line-height: 1.5;
+      margin: 5px 0;
+      overflow-wrap: anywhere;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-self: flex-start;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: bold;
+      background: #d8f3df;
+      color: #075c3b;
+    }
+
+    .found { background: #dbeafe; color: #1d4ed8; }
+    .pending { background: #fff0c2; color: #795500; }
+    .returned { background: #e5e7eb; color: #374151; }
+
+    .card-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .empty-state { text-align: center; padding: 35px 20px; }
+
+    .detail-photo {
+      max-width: 100%;
+      max-height: 430px;
+      object-fit: contain;
+      border-radius: 12px;
+      background: #eef2ee;
+    }
+
+    .detail-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 26px;
+    }
+
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px;
+      border-bottom: 1px solid #e1e8e3;
+      vertical-align: top;
+    }
+
+    th { background: #eaf4ed; color: var(--green); }
+    td form { min-width: 155px; }
+
+    .inline-form {
+      display: flex;
+      gap: 7px;
+      align-items: center;
+    }
+
+    .inline-form select { min-width: 130px; }
+
+    .site-footer {
+      text-align: center;
+      padding: 25px 15px;
+      color: white;
+      background: rgba(3,63,42,.96);
+    }
+
+    @media (max-width: 800px) {
+      .filter-grid, .form-grid, .detail-layout { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .brand h1 { font-size: 20px; }
+      .container, .hero { width: 94%; }
+    }
+
+    @media (max-width: 480px) {
+      .stats { grid-template-columns: 1fr 1fr; }
+      .panel { padding: 17px; }
+      .site-header { padding: 15px 4%; }
+    }
+  </style>
+  {% block head %}{% endblock %}
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <img src="{{ campus_logo }}" alt="SLSU JGE logo"
+             onerror="this.style.display='none'">
+        <div>
+          <h1>SLSU JGE FindHub</h1>
+          <p>Lost and Found Information System</p>
+        </div>
+      </div>
+
+      <nav>
+        <a href="{{ url_for('home') }}">🏠 Home</a>
+        <a href="{{ url_for('new_report') }}">📝 Submit Report</a>
+        {% if admin_logged_in %}
+          <a href="{{ url_for('admin_dashboard') }}">🛠️ Admin Dashboard</a>
+          <a href="{{ url_for('admin_logout') }}">🚪 Log Out</a>
+        {% else %}
+          <a href="{{ url_for('admin_login') }}">🔐 Admin Login</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="container" style="margin-bottom:0">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {% block hero %}{% endblock %}
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <p>🎒 🔑 📱 🪪 &nbsp; Helping the SLSU JGE community find what matters.</p>
+    <p>&copy; {{ today.year }} SLSU JGE FindHub</p>
+  </footer>
+</body>
+</html>
