@@ -12,11 +12,6 @@
       --deep: #063f2a;
       --bright: #087647;
       --ink: #24332b;
-
-      /* Transparent box colors */
-      --box-bg: rgba(255, 255, 255, 0.76);
-      --soft-bg: rgba(232, 246, 235, 0.78);
-      --border-color: rgba(255, 255, 255, 0.58);
     }
 
     * {
@@ -33,11 +28,11 @@
       font-family: Arial, sans-serif;
       color: var(--ink);
 
-      /* Campus background stays visible */
+      /* Campus building background */
       background:
         linear-gradient(
           rgba(3, 35, 23, 0.32),
-          rgba(3, 35, 23, 0.38)
+          rgba(3, 35, 23, 0.40)
         ),
         url("{{ campus_photo }}") center center / cover fixed no-repeat;
     }
@@ -46,13 +41,15 @@
       color: var(--green);
     }
 
-    /* HEADER */
+    /* =========================
+       HEADER
+    ========================= */
+
     .site-header {
-      background: rgba(5, 75, 47, 0.91);
+      background: rgba(5, 55, 37, 0.91);
       color: white;
-      padding: 12px 4%;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.20);
-      backdrop-filter: blur(5px);
+      padding: 12px 5%;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.16);
     }
 
     .header-inner {
@@ -68,7 +65,7 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 11px;
     }
 
     .brand img {
@@ -101,8 +98,8 @@
       text-decoration: none;
       font-weight: bold;
       font-size: 13px;
-      padding: 8px 11px;
-      border: 1px solid rgba(255, 255, 255, 0.55);
+      padding: 9px 11px;
+      border: 1px solid rgba(255, 255, 255, 0.65);
       border-radius: 8px;
       transition: 0.2s;
     }
@@ -112,72 +109,82 @@
       color: var(--green);
     }
 
-    /* MAIN CONTAINER */
+    /* =========================
+       MAIN LAYOUT
+    ========================= */
+
     .container {
-      width: 88%;
-      max-width: 1080px;
-      margin: 20px auto 28px;
+      width: 92%;
+      max-width: 1120px;
+      margin: 18px auto 28px;
     }
 
-    /* GENERAL BOXES */
+    /* General content boxes:
+       transparent so the campus is visible */
     .panel {
-      background: var(--box-bg);
-      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.35);
       border-radius: 13px;
-      padding: 18px;
-      box-shadow: 0 5px 18px rgba(0, 0, 0, 0.13);
-      margin-bottom: 18px;
+      padding: 19px;
+      box-shadow: 0 5px 17px rgba(0, 0, 0, 0.12);
+      margin-bottom: 17px;
       backdrop-filter: blur(3px);
     }
 
-    /* HERO BOX - SMALLER */
+    /* =========================
+       UPPER HERO / COVER
+    ========================= */
+
     .hero {
-      width: 88%;
-      max-width: 1080px;
-      margin: 22px auto 18px;
-      background: rgba(229, 244, 233, 0.78);
-      border: 1px solid rgba(255, 255, 255, 0.60);
+      width: 92%;
+      max-width: 1120px;
+      margin: 20px auto 16px;
+      background: rgba(235, 248, 239, 0.79);
+      border: 1px solid rgba(255, 255, 255, 0.4);
       border-radius: 15px;
-      padding: 25px 22px;
+      padding: 26px 22px;
       text-align: center;
-      box-shadow: 0 5px 18px rgba(0, 0, 0, 0.13);
+      box-shadow: 0 5px 18px rgba(0, 0, 0, 0.15);
       backdrop-filter: blur(3px);
     }
 
     .hero h2 {
       color: var(--green);
-      font-size: clamp(25px, 3.2vw, 34px);
+      font-size: clamp(25px, 3.5vw, 36px);
+      line-height: 1.2;
       margin: 0 0 10px;
     }
 
     .hero p {
-      max-width: 680px;
-      line-height: 1.6;
-      margin: 0 auto 16px;
+      max-width: 700px;
+      line-height: 1.55;
+      margin: 0 auto 15px;
       font-size: 14px;
     }
 
-    /* BUTTONS */
+    /* =========================
+       BUTTONS
+    ========================= */
+
     .button,
     button {
       display: inline-block;
       border: 0;
-      border-radius: 8px;
+      border-radius: 7px;
       background: var(--bright);
       color: white;
-      padding: 9px 13px;
+      padding: 10px 14px;
       font-weight: bold;
       text-decoration: none;
       cursor: pointer;
       font-size: 13px;
-      transition: 0.2s;
+      transition: background 0.2s;
     }
 
     .button:hover,
     button:hover {
       background: var(--deep);
       color: white;
-      transform: translateY(-1px);
     }
 
     .secondary {
@@ -193,13 +200,16 @@
       font-size: 12px;
     }
 
-    /* EMOJI STICKERS */
+    /* =========================
+       EMOJI STICKERS
+    ========================= */
+
     .sticker-row {
       display: flex;
       justify-content: center;
       gap: 9px;
       flex-wrap: wrap;
-      margin: 0 0 15px;
+      margin: 0 0 14px;
     }
 
     .sticker {
@@ -208,37 +218,40 @@
       gap: 7px;
       padding: 7px 11px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.82);
+      background: rgba(255, 255, 255, 0.83);
       border: 1px solid rgba(7, 92, 59, 0.18);
-      box-shadow: 1px 3px 5px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
       font-weight: bold;
-      font-size: 13px;
       color: var(--green);
+      font-size: 13px;
     }
 
     .sticker span {
       font-size: 17px;
     }
 
-    /* FLASH MESSAGES */
+    /* =========================
+       FLASH MESSAGES
+    ========================= */
+
     .flash {
       border-radius: 8px;
-      padding: 10px 13px;
+      padding: 11px 14px;
       margin: 0 0 10px;
-      background: rgba(216, 243, 223, 0.94);
+      background: rgba(216, 243, 223, 0.95);
       color: #155c2e;
       border-left: 4px solid #198754;
     }
 
     .flash.warning {
-      background: rgba(255, 240, 194, 0.95);
+      background: rgba(255, 240, 194, 0.96);
       color: #795500;
       border-color: #d49b00;
     }
 
     .flash.danger,
     .flash.error {
-      background: rgba(248, 215, 218, 0.95);
+      background: rgba(248, 215, 218, 0.96);
       color: #842029;
       border-color: #b42332;
     }
@@ -248,12 +261,14 @@
       color: var(--green);
     }
 
-    /* FORMS */
+    /* =========================
+       FORMS
+    ========================= */
+
     label {
       display: block;
       font-weight: bold;
       margin: 10px 0 5px;
-      font-size: 13px;
     }
 
     input,
@@ -264,8 +279,8 @@
       border: 1px solid #c8d5cc;
       border-radius: 7px;
       font: inherit;
-      font-size: 13px;
-      background: rgba(255, 255, 255, 0.88);
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.91);
       color: #24332b;
     }
 
@@ -285,19 +300,26 @@
     }
 
     .help {
-      color: #46584c;
+      color: #5c6b61;
       font-size: 12px;
       line-height: 1.5;
     }
 
-    /* SEARCH FILTERS */
+    /* =========================
+       SEARCH / FILTER BOX
+    ========================= */
+
     .filter-grid {
       display: grid;
       grid-template-columns: 2fr repeat(3, minmax(0, 1fr));
-      gap: 9px;
+      gap: 10px;
     }
 
-    /* STATISTICS - ALL FOUR BOXES SAME SIZE */
+    /* =========================
+       STATISTICS BOXES
+       All four boxes have equal size
+    ========================= */
+
     .stats {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -307,40 +329,45 @@
     }
 
     .stat {
-      width: 100%;
       min-width: 0;
-      min-height: 88px;
-      background: rgba(238, 247, 240, 0.76);
-      border: 1px solid rgba(213, 232, 218, 0.85);
+      min-height: 95px;
+      background: rgba(244, 250, 245, 0.79);
+      border: 1px solid rgba(255, 255, 255, 0.5);
       border-radius: 11px;
-      padding: 13px;
+      padding: 14px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
       display: flex;
       flex-direction: column;
       justify-content: center;
       overflow-wrap: anywhere;
+      backdrop-filter: blur(2px);
     }
 
     .stat strong {
       display: block;
       color: var(--green);
-      font-size: 23px;
+      font-size: 24px;
       margin-top: 5px;
     }
 
-    /* REPORT CARDS */
+    /* =========================
+       REPORT CARDS
+    ========================= */
+
     .report-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 15px;
       align-items: stretch;
     }
 
     .report-card {
+      min-width: 0;
       overflow: hidden;
       border-radius: 12px;
-      background: rgba(255, 255, 255, 0.79);
-      border: 1px solid rgba(255, 255, 255, 0.55);
-      box-shadow: 0 5px 16px rgba(0, 0, 0, 0.13);
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
       display: flex;
       flex-direction: column;
       backdrop-filter: blur(2px);
@@ -349,9 +376,9 @@
     .report-photo,
     .placeholder-photo {
       width: 100%;
-      height: 170px;
+      height: 165px;
       object-fit: cover;
-      background: rgba(232, 238, 233, 0.75);
+      background: rgba(232, 238, 233, 0.8);
     }
 
     .placeholder-photo {
@@ -376,8 +403,8 @@
     .report-content p {
       line-height: 1.45;
       margin: 4px 0;
-      font-size: 13px;
       overflow-wrap: anywhere;
+      font-size: 13px;
     }
 
     .tag {
@@ -415,20 +442,23 @@
 
     .empty-state {
       text-align: center;
-      padding: 23px 15px;
+      padding: 25px 16px;
+      background: rgba(255, 255, 255, 0.79);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+      backdrop-filter: blur(2px);
     }
 
-    .empty-state h3 {
-      margin: 10px 0;
-    }
+    /* =========================
+       REPORT DETAILS
+    ========================= */
 
-    /* REPORT DETAILS */
     .detail-photo {
       max-width: 100%;
-      max-height: 350px;
+      max-height: 380px;
       object-fit: contain;
       border-radius: 10px;
-      background: rgba(238, 242, 238, 0.75);
+      background: rgba(238, 242, 238, 0.8);
     }
 
     .detail-layout {
@@ -437,7 +467,10 @@
       gap: 20px;
     }
 
-    /* ADMIN TABLES */
+    /* =========================
+       ADMIN TABLES
+    ========================= */
+
     .table-wrap {
       overflow-x: auto;
     }
@@ -445,7 +478,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      background: rgba(255, 255, 255, 0.88);
+      background: rgba(255, 255, 255, 0.94);
     }
 
     th,
@@ -458,12 +491,12 @@
     }
 
     th {
-      background: rgba(234, 244, 237, 0.94);
+      background: #eaf4ed;
       color: var(--green);
     }
 
     td form {
-      min-width: 140px;
+      min-width: 145px;
     }
 
     .inline-form {
@@ -476,70 +509,74 @@
       min-width: 115px;
     }
 
-    /* FOOTER */
+    /* =========================
+       FOOTER
+    ========================= */
+
     .site-footer {
       text-align: center;
-      padding: 17px 12px;
+      padding: 15px 12px;
       color: white;
-      background: rgba(3, 63, 42, 0.86);
-      backdrop-filter: blur(4px);
-      font-size: 13px;
+      background: rgba(3, 55, 37, 0.87);
       margin-top: 20px;
+      font-size: 12px;
     }
 
     .site-footer p {
       margin: 5px 0;
     }
 
-    /* TABLET */
-    @media (max-width: 800px) {
-      .container,
-      .hero {
-        width: 92%;
+    /* =========================
+       TABLET
+    ========================= */
+
+    @media (max-width: 900px) {
+      .header-inner {
+        justify-content: center;
       }
 
       .filter-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .form-grid,
-      .detail-layout {
-        grid-template-columns: 1fr;
+      .report-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .stats {
         grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 7px;
+        gap: 8px;
       }
 
       .stat {
-        padding: 9px;
-        min-height: 78px;
+        padding: 10px;
         font-size: 12px;
       }
 
       .stat strong {
-        font-size: 20px;
+        font-size: 21px;
+      }
+    }
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 600px) {
+      body {
+        background-attachment: scroll;
+      }
+
+      .site-header {
+        padding: 12px 4%;
       }
 
       .brand h1 {
         font-size: 19px;
       }
-    }
 
-    /* MOBILE */
-    @media (max-width: 520px) {
-      .site-header {
-        padding: 12px 4%;
-      }
-
-      .header-inner {
-        justify-content: center;
-      }
-
-      .brand {
-        width: 100%;
-        justify-content: center;
+      .brand p {
+        font-size: 11px;
       }
 
       nav {
@@ -547,8 +584,8 @@
       }
 
       nav a {
+        padding: 8px 9px;
         font-size: 12px;
-        padding: 7px 9px;
       }
 
       .container,
@@ -556,9 +593,13 @@
         width: 94%;
       }
 
+      .container {
+        margin-top: 13px;
+      }
+
       .hero {
-        padding: 21px 14px;
-        margin-top: 16px;
+        margin-top: 14px;
+        padding: 22px 14px;
       }
 
       .hero h2 {
@@ -573,31 +614,43 @@
         padding: 14px;
       }
 
-      .filter-grid {
-        grid-template-columns: 1fr;
-      }
-
-      /* Keep all four stat boxes the same size */
       .stats {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 9px;
       }
 
       .stat {
-        min-height: 82px;
-        padding: 11px;
+        min-height: 85px;
+        padding: 12px;
+        font-size: 13px;
       }
 
       .stat strong {
-        font-size: 21px;
+        font-size: 22px;
+      }
+
+      .filter-grid,
+      .form-grid,
+      .detail-layout {
+        grid-template-columns: 1fr;
       }
 
       .report-grid {
         grid-template-columns: 1fr;
       }
 
-      .full {
-        grid-column: auto;
+      .report-photo,
+      .placeholder-photo {
+        height: 190px;
+      }
+
+      .sticker {
+        padding: 6px 9px;
+        font-size: 12px;
+      }
+
+      .site-footer {
+        padding: 14px 10px;
       }
     }
   </style>
@@ -608,10 +661,13 @@
 <body>
   <header class="site-header">
     <div class="header-inner">
+
       <div class="brand">
-        <img src="{{ campus_logo }}"
-             alt="SLSU JGE logo"
-             onerror="this.style.display='none'">
+        <img
+          src="{{ campus_logo }}"
+          alt="SLSU JGE logo"
+          onerror="this.style.display='none'"
+        >
 
         <div>
           <h1>SLSU JGE FindHub</h1>
@@ -630,12 +686,13 @@
           <a href="{{ url_for('admin_login') }}">🔐 Admin Login</a>
         {% endif %}
       </nav>
+
     </div>
   </header>
 
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-      <div class="container" style="margin-bottom: 0">
+      <div class="container" style="margin-bottom: 0;">
         {% for category, message in messages %}
           <div class="flash {{ category }}">{{ message }}</div>
         {% endfor %}
@@ -643,6 +700,7 @@
     {% endif %}
   {% endwith %}
 
+  <!-- The hero/cover stays above the statistics and search boxes -->
   {% block hero %}{% endblock %}
 
   <main class="container">
