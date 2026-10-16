@@ -63,10 +63,25 @@
             border-radius: 7px;
             font-weight: bold;
             display: inline-block;
+            transition: background .2s, transform .2s;
+        }
+
+        nav a:hover, .button:hover {
+            background: #ffda63;
+            transform: translateY(-1px);
+        }
+
+        .admin-button {
+            background: white;
+            color: #075b36;
+        }
+
+        .admin-button:hover {
+            background: #e7f5eb;
         }
 
         .hero {
-            min-height: 300px;
+            min-height: 320px;
             padding: 55px 7%;
             color: white;
             background:
@@ -96,6 +111,41 @@
             width: 90%;
             max-width: 1200px;
             margin: 30px auto;
+        }
+
+        .flash-messages {
+            margin-bottom: 22px;
+        }
+
+        .flash {
+            padding: 14px 18px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid transparent;
+        }
+
+        .flash.success {
+            background: #dff5e5;
+            color: #155c30;
+            border-color: #b9e5c5;
+        }
+
+        .flash.warning {
+            background: #fff3cd;
+            color: #775b00;
+            border-color: #ffe69c;
+        }
+
+        .flash.danger, .flash.error {
+            background: #fce4e4;
+            color: #8b2020;
+            border-color: #f3bcbc;
+        }
+
+        .flash.info {
+            background: #e1efff;
+            color: #174b80;
+            border-color: #bad8fa;
         }
 
         .stats {
@@ -137,6 +187,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
             gap: 12px;
+            margin-top: 15px;
         }
 
         input, select {
@@ -146,6 +197,11 @@
             border-radius: 7px;
             font-size: 15px;
             background: white;
+        }
+
+        input:focus, select:focus {
+            outline: 2px solid #70b98d;
+            border-color: #075b36;
         }
 
         button {
@@ -162,6 +218,10 @@
             font-weight: bold;
         }
 
+        .green-button:hover {
+            background: #0b7545;
+        }
+
         .report-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -170,6 +230,7 @@
 
         .report-card {
             transition: transform .2s, box-shadow .2s;
+            overflow-wrap: anywhere;
         }
 
         .report-card:hover {
@@ -180,6 +241,11 @@
         .report-card h3 {
             color: #075b36;
             margin: 10px 0;
+            font-size: 21px;
+        }
+
+        .report-card p {
+            margin: 7px 0;
         }
 
         .tag {
@@ -193,12 +259,37 @@
             margin: 3px 4px 3px 0;
         }
 
+        .status-open {
+            background: #e4f4e9;
+            color: #075b36;
+        }
+
+        .status-pending {
+            background: #fff0c2;
+            color: #775500;
+        }
+
+        .status-returned {
+            background: #dcecff;
+            color: #174b80;
+        }
+
         .empty {
             background: white;
             padding: 35px;
             text-align: center;
             border-radius: 12px;
             grid-column: 1 / -1;
+            box-shadow: 0 3px 14px #0000000c;
+        }
+
+        .empty h3 {
+            color: #075b36;
+            margin-bottom: 8px;
+        }
+
+        .empty .button {
+            margin-top: 15px;
         }
 
         footer {
@@ -207,6 +298,10 @@
             margin-top: 45px;
             background: #073d27;
             color: white;
+        }
+
+        footer p {
+            margin: 4px 0;
         }
 
         @media (max-width: 650px) {
@@ -235,7 +330,7 @@
 
 <header>
     <img
-        src="https://www.slsu.edu.ph/wp-content/uploads/2023/05/Campuses/Campus-Logo/SLSU-JGE-Logo.png"
+        src="{{ campus_logo }}"
         alt="SLSU JGE Logo"
     >
 
@@ -248,6 +343,19 @@
     <nav>
         <a href="{{ url_for('home') }}">Home</a>
         <a href="{{ url_for('new_report') }}">Report an Item</a>
+
+        {% if admin_logged_in %}
+            <a class="admin-button" href="{{ url_for('admin_dashboard') }}">
+                Admin Dashboard
+            </a>
+            <a class="admin-button" href="{{ url_for('admin_logout') }}">
+                Log Out
+            </a>
+        {% else %}
+            <a class="admin-button" href="{{ url_for('admin_login') }}">
+                Admin Login
+            </a>
+        {% endif %}
     </nav>
 </header>
 
@@ -265,6 +373,29 @@
 </section>
 
 <main>
+
+    <!-- Submission and validation messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <section class="flash-messages" aria-live="polite">
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}" role="alert">
+                        {% if category == 'success' %}
+                            <strong>✓ Success!</strong>
+                        {% elif category == 'warning' %}
+                            <strong>⚠ Notice:</strong>
+                        {% elif category == 'danger' or category == 'error' %}
+                            <strong>✕ Error:</strong>
+                        {% else %}
+                            <strong>Information:</strong>
+                        {% endif %}
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </section>
+        {% endif %}
+    {% endwith %}
+
     <section class="stats">
         <div class="stat">
             <p>Open Reports</p>
@@ -284,7 +415,7 @@
 
     <section class="search-box">
         <h2>Find an Item</h2>
-        <p>Search by item name, description, or category.</p>
+        <p>Search by item name, description, location, or category.</p>
 
         <form method="GET" action="{{ url_for('home') }}">
             <div class="filters">
@@ -293,31 +424,50 @@
                     name="q"
                     placeholder="Search items..."
                     value="{{ q }}"
+                    aria-label="Search items"
                 >
 
-                <select name="kind">
+                <select name="type" aria-label="Report type">
                     <option value="">All report types</option>
-                    <option value="lost" {% if kind == 'lost' %}selected{% endif %}>
+                    <option value="Lost"
+                        {% if kind == 'Lost' %}selected{% endif %}>
                         Lost Item
                     </option>
-                    <option value="found" {% if kind == 'found' %}selected{% endif %}>
+                    <option value="Found"
+                        {% if kind == 'Found' %}selected{% endif %}>
                         Found Item
                     </option>
                 </select>
 
-                <select name="category">
+                <select name="category" aria-label="Item category">
                     <option value="">All categories</option>
                     {% for item_category in categories %}
-                    <option
-                        value="{{ item_category }}"
-                        {% if category == item_category %}selected{% endif %}
-                    >
-                        {{ item_category }}
-                    </option>
+                        <option value="{{ item_category }}"
+                            {% if category == item_category %}selected{% endif %}>
+                            {{ item_category }}
+                        </option>
                     {% endfor %}
                 </select>
 
-                <button class="green-button" type="submit">Search</button>
+                <select name="status" aria-label="Report status">
+                    <option value="">All statuses</option>
+                    <option value="Open"
+                        {% if status == 'Open' %}selected{% endif %}>
+                        Open
+                    </option>
+                    <option value="Pending Claim"
+                        {% if status == 'Pending Claim' %}selected{% endif %}>
+                        Pending Claim
+                    </option>
+                    <option value="Returned"
+                        {% if status == 'Returned' %}selected{% endif %}>
+                        Returned
+                    </option>
+                </select>
+
+                <button class="green-button" type="submit">
+                    Search
+                </button>
             </div>
         </form>
     </section>
@@ -326,51 +476,74 @@
 
     <section class="report-grid">
         {% for report in reports %}
-        <article class="report-card">
-            <span class="tag">{{ report.kind|title }}</span>
-            <span class="tag">{{ report.status|title }}</span>
+            <article class="report-card">
 
-            <h3>{{ report.title }}</h3>
+                <span class="tag">
+                    {{ report.report_type|title }}
+                </span>
 
-            <p><strong>Category:</strong> {{ report.category }}</p>
+                <span class="tag
+                    {% if report.status == 'Open' %}status-open
+                    {% elif report.status == 'Pending Claim' %}status-pending
+                    {% elif report.status == 'Returned' %}status-returned
+                    {% endif %}">
+                    {{ report.status|title }}
+                </span>
 
-            <p>
-                <strong>Location:</strong>
-                {{ report.location or 'Not specified' }}
-            </p>
+                <h3>{{ report.item_name }}</h3>
 
-            <p>
-                {{ (report.description or 'No description provided')[:150] }}
-                {% if report.description and report.description|length > 150 %}...{% endif %}
-            </p>
+                <p>
+                    <strong>Category:</strong>
+                    {{ report.category }}
+                </p>
 
-            <p>
-                <small>
-                    Reported:
-                    {{ report.created_at.strftime('%b %d, %Y') if report.created_at else 'Date unavailable' }}
-                </small>
-            </p>
+                <p>
+                    <strong>Location:</strong>
+                    {{ report.location or 'Not specified' }}
+                </p>
 
-            <p style="margin-top: 15px;">
-                <a
-                    class="button"
-                    href="{{ url_for('report_detail', report_id=report.id) }}"
-                >
-                    View Details
-                </a>
-            </p>
-        </article>
+                <p>
+                    {{ (report.description or 'No description provided')[:150] }}
+                    {% if report.description and report.description|length > 150 %}...{% endif %}
+                </p>
+
+                {% if report.photo %}
+                    <p>
+                        <a href="{{ url_for('uploaded_photo', filename=report.photo) }}"
+                           target="_blank" rel="noopener">
+                            View item photo
+                        </a>
+                    </p>
+                {% endif %}
+
+                <p>
+                    <small>
+                        Reported:
+                        {{ report.created_at.strftime('%b %d, %Y') if report.created_at else 'Date unavailable' }}
+                    </small>
+                </p>
+
+                <p style="margin-top: 15px;">
+                    <a class="button"
+                       href="{{ url_for('report_detail', report_id=report.id) }}">
+                        View Details
+                    </a>
+                </p>
+
+            </article>
         {% else %}
-        <div class="empty">
-            <h3>No reports found</h3>
-            <p>Try another search, or submit a new lost or found item report.</p>
-            <br>
-            <a class="button" href="{{ url_for('new_report') }}">
-                Submit a Report
-            </a>
-        </div>
+            <div class="empty">
+                <h3>No reports found</h3>
+                <p>
+                    Try another search, or submit a new lost or found item report.
+                </p>
+                <a class="button" href="{{ url_for('new_report') }}">
+                    Submit a Report
+                </a>
+            </div>
         {% endfor %}
     </section>
+
 </main>
 
 <footer>
