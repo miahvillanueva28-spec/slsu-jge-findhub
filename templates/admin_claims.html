@@ -1,81 +1,96 @@
 {% extends "base.html" %}
-
-{% block title %}Manage Claims | SLSU JGE FindHub{% endblock %}
+{% block title %}Claim Requests | FindHub{% endblock %}
 
 {% block content %}
 <section class="panel">
-  <h1>Claims Management</h1>
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+    <div>
+      <h2>🤝 Claim Requests</h2>
+      <p class="help">
+        Review proof privately. Approving a claim marks its report as Returned.
+      </p>
+    </div>
 
-  <p>
-    <a href="{{ url_for('admin_dashboard') }}">
-      ← Back to Admin Dashboard
+    <a class="button secondary" href="{{ url_for('admin_dashboard') }}">
+      ← Dashboard
     </a>
-  </p>
+  </div>
 
   {% if claims %}
     <div class="table-wrap">
       <table>
         <thead>
           <tr>
-            <th>Report</th>
+            <th>Item / Report</th>
             <th>Claimant</th>
-            <th>Contact</th>
-            <th>Claim Details</th>
-            <th>Status</th>
+            <th>Proof of ownership</th>
+            <th>Review</th>
           </tr>
         </thead>
 
         <tbody>
-          {% for claim in claims %}
-            <tr>
-              <td>
-                {% if claim.report %}
-                  <a href="{{ url_for('report_detail', report_id=claim.report.id) }}">
-                    {{ claim.report.item_name }}
-                  </a>
-                  <br>
-                  <small>Report #{{ claim.report.id }}</small>
-                {% else %}
-                  Report unavailable
-                {% endif %}
-              </td>
+          {% for c in claims %}
+          <tr>
+            <td>
+              <strong>{{ c.report.item_name }}</strong><br>
+              <span class="help">
+                Report #{{ c.report.id }} · {{ c.report.report_type }}
+              </span><br>
+              <a href="{{ url_for('report_detail', report_id=c.report.id) }}">
+                View report
+              </a>
+            </td>
 
-              <td>{{ claim.claimant_name }}</td>
+            <td>
+              {{ c.claimant_name }}<br>
 
-              <td>{{ claim.claimant_contact }}</td>
+              {% if c.student_or_staff_id %}
+                <span class="help">ID: {{ c.student_or_staff_id }}</span><br>
+              {% endif %}
 
-              <td>{{ claim.claim_message }}</td>
+              <span class="help">{{ c.contact }}</span>
+            </td>
 
-              <td>
-                <form
-                  method="POST"
-                  action="{{ url_for('update_claim_status', claim_id=claim.id) }}"
-                >
-                  <select name="status" aria-label="Claim status">
-                    {% for option in ['Pending', 'Approved', 'Rejected', 'Resolved'] %}
-                      <option
-                        value="{{ option }}"
-                        {% if claim.status|string|lower == option|lower %}
-                          selected
-                        {% endif %}
-                      >
-                        {{ option }}
-                      </option>
-                    {% endfor %}
-                  </select>
+            <td style="white-space:pre-wrap;min-width:220px">
+              {{ c.proof }}
+            </td>
 
-                  <button type="submit" style="margin-top:6px;">
-                    Update
-                  </button>
-                </form>
-              </td>
-            </tr>
+            <td>
+              <span class="tag {% if c.status == 'Pending' %}pending{% endif %}">
+                {{ c.status }}
+              </span>
+
+              <form
+                method="POST"
+                action="{{ url_for('update_claim_status', claim_id=c.id) }}"
+                style="margin-top:10px"
+              >
+                <label for="claim-{{ c.id }}">Update status</label>
+
+                <select id="claim-{{ c.id }}" name="status">
+                  {% for s in ['Pending', 'Approved', 'Rejected'] %}
+                    <option value="{{ s }}" {% if c.status == s %}selected{% endif %}>
+                      {{ s }}
+                    </option>
+                  {% endfor %}
+                </select>
+
+                <button type="submit" style="margin-top:8px">
+                  Save Review
+                </button>
+              </form>
+            </td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
   {% else %}
-    <p>No claims have been submitted yet.</p>
+    <div class="empty-state">
+      <div style="font-size:42px">📭</div>
+      <h3>No claim requests yet</h3>
+      <p>New claim requests will appear here.</p>
+    </div>
   {% endif %}
 </section>
 {% endblock %}
