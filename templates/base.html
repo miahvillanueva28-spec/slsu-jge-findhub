@@ -1,4 +1,4 @@
-```html
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -11,20 +11,11 @@
       --green: #075c3b;
       --deep: #063f2a;
       --bright: #087647;
-      --ink: #20352c;
-
-      /* More transparent panels */
-      --panel-bg: rgba(255, 255, 255, 0.64);
-      --hero-bg: rgba(229, 244, 233, 0.66);
-      --border: rgba(255, 255, 255, 0.40);
+      --ink: #24332b;
     }
 
     * {
       box-sizing: border-box;
-    }
-
-    html {
-      scroll-behavior: smooth;
     }
 
     body {
@@ -32,13 +23,8 @@
       min-height: 100vh;
       font-family: Arial, sans-serif;
       color: var(--ink);
-
-      /* Campus background is more visible */
       background:
-        linear-gradient(
-          rgba(3, 35, 23, 0.30),
-          rgba(3, 35, 23, 0.36)
-        ),
+        linear-gradient(rgba(3, 35, 23, .18), rgba(3, 35, 23, .24)),
         url("{{ campus_photo }}") center center / cover fixed no-repeat;
     }
 
@@ -46,13 +32,11 @@
       color: var(--green);
     }
 
-    /* HEADER */
     .site-header {
-      background: rgba(5, 55, 37, 0.88);
+      background: rgba(5, 55, 37, .88);
       color: white;
       padding: 12px 4%;
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.18);
-      backdrop-filter: blur(5px);
+      box-shadow: 0 3px 12px #0002;
     }
 
     .header-inner {
@@ -61,7 +45,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       flex-wrap: wrap;
     }
 
@@ -72,8 +56,8 @@
     }
 
     .brand img {
-      width: 45px;
-      height: 45px;
+      width: 46px;
+      height: 46px;
       object-fit: contain;
       border-radius: 50%;
       background: white;
@@ -82,7 +66,7 @@
 
     .brand h1 {
       margin: 0 0 4px;
-      font-size: 20px;
+      font-size: 21px;
     }
 
     .brand p {
@@ -102,9 +86,8 @@
       font-weight: bold;
       font-size: 12px;
       padding: 8px 10px;
-      border: 1px solid rgba(255, 255, 255, 0.55);
+      border: 1px solid #ffffff80;
       border-radius: 7px;
-      transition: 0.2s;
     }
 
     nav a:hover {
@@ -112,53 +95,46 @@
       color: var(--green);
     }
 
-    /* MAIN PAGE WIDTH: smaller */
     .container {
-      width: 88%;
+      width: 92%;
       max-width: 1050px;
-      margin: 20px auto 28px;
+      margin: 16px auto 24px;
     }
 
-    /* TRANSPARENT CONTENT BOXES */
+    /* General panels */
     .panel {
-      background: var(--panel-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 17px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.13);
-      backdrop-filter: blur(3px);
-      margin-bottom: 16px;
+      background: rgba(255, 255, 255, .66);
+      border-radius: 10px;
+      padding: 14px;
+      box-shadow: 0 3px 12px #0002;
+      margin-bottom: 14px;
     }
 
-    /* SMALLER HERO / TITLE BOX */
+    /* Top hero cover */
     .hero {
-      width: 84%;
-      max-width: 950px;
-      margin: 22px auto 18px;
-      background: var(--hero-bg);
-      border: 1px solid rgba(255, 255, 255, 0.38);
-      border-radius: 14px;
-      padding: 23px 20px;
+      width: 92%;
+      max-width: 1050px;
+      margin: 18px auto 14px;
+      background: rgba(235, 246, 238, .68);
+      border-radius: 12px;
+      padding: 22px 18px;
       text-align: center;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
-      backdrop-filter: blur(3px);
+      box-shadow: 0 3px 12px #0002;
     }
 
     .hero h2 {
-      color: #075c3b;
-      font-size: clamp(23px, 3vw, 32px);
-      line-height: 1.2;
-      margin: 0 0 10px;
+      color: var(--green);
+      font-size: clamp(24px, 3vw, 32px);
+      margin: 0 0 8px;
     }
 
     .hero p {
-      max-width: 680px;
-      line-height: 1.55;
+      max-width: 650px;
+      line-height: 1.5;
+      margin: 0 auto 14px;
       font-size: 14px;
-      margin: 0 auto 15px;
     }
 
-    /* BUTTONS */
     .button,
     button {
       display: inline-block;
@@ -170,8 +146,7 @@
       font-weight: bold;
       text-decoration: none;
       cursor: pointer;
-      font-size: 12px;
-      transition: 0.2s;
+      font-size: 13px;
     }
 
     .button:hover,
@@ -190,10 +165,10 @@
 
     .small {
       padding: 7px 9px;
-      font-size: 11px;
+      font-size: 12px;
     }
 
-    /* EMOJI STICKERS */
+    /* Category stickers */
     .sticker-row {
       display: flex;
       justify-content: center;
@@ -208,9 +183,9 @@
       gap: 6px;
       padding: 6px 10px;
       border-radius: 999px;
-      background: rgba(255, 255, 255, 0.78);
-      border: 1px solid rgba(7, 92, 59, 0.18);
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+      background: rgba(255, 255, 255, .82);
+      border: 1px solid #d6e9db;
+      box-shadow: 1px 2px 4px #0001;
       font-weight: bold;
       font-size: 12px;
       color: var(--green);
@@ -220,26 +195,26 @@
       font-size: 16px;
     }
 
-    /* SUCCESS / ERROR MESSAGES */
+    /* Flash messages */
     .flash {
-      border-radius: 7px;
+      border-radius: 8px;
       padding: 10px 12px;
       margin: 0 0 10px;
-      background: rgba(216, 243, 223, 0.94);
+      background: #d8f3df;
       color: #155c2e;
       border-left: 4px solid #198754;
       font-size: 13px;
     }
 
     .flash.warning {
-      background: rgba(255, 240, 194, 0.94);
+      background: #fff0c2;
       color: #795500;
       border-color: #d49b00;
     }
 
     .flash.danger,
     .flash.error {
-      background: rgba(248, 215, 218, 0.94);
+      background: #f8d7da;
       color: #842029;
       border-color: #b42332;
     }
@@ -249,29 +224,36 @@
       color: var(--green);
     }
 
-    /* FORMS */
+    h2 {
+      font-size: 22px;
+    }
+
+    h3 {
+      font-size: 17px;
+    }
+
     label {
       display: block;
       font-weight: bold;
-      font-size: 13px;
       margin: 10px 0 5px;
+      font-size: 13px;
     }
 
     input,
     select,
     textarea {
       width: 100%;
-      padding: 9px 10px;
-      border: 1px solid rgba(95, 125, 105, 0.40);
+      padding: 9px;
+      border: 1px solid #c8d5cc;
       border-radius: 7px;
       font: inherit;
       font-size: 13px;
-      background: rgba(255, 255, 255, 0.82);
-      color: #24332b;
+      background: rgba(255, 255, 255, .92);
+      color: var(--ink);
     }
 
     textarea {
-      min-height: 95px;
+      min-height: 90px;
       resize: vertical;
     }
 
@@ -286,34 +268,39 @@
     }
 
     .help {
-      color: #42574a;
+      color: #5c6b61;
       font-size: 12px;
-      line-height: 1.45;
+      line-height: 1.5;
     }
 
-    /* SEARCH BOX */
+    /* Search area */
     .filter-grid {
       display: grid;
-      grid-template-columns: 2fr repeat(3, minmax(0, 1fr));
-      gap: 9px;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 8px;
     }
 
-    /* STATISTICS: same size for all four boxes */
+    /* Four equal statistics cards */
     .stats {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 10px;
-      margin-bottom: 17px;
+      margin-bottom: 16px;
+      align-items: stretch;
     }
 
     .stat {
       min-width: 0;
-      min-height: 86px;
-      background: rgba(238, 247, 240, 0.64);
-      border: 1px solid rgba(213, 232, 218, 0.65);
-      border-radius: 9px;
+      min-height: 82px;
       padding: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, .68);
+      border: 1px solid rgba(255, 255, 255, .55);
+      box-shadow: 0 3px 10px #0002;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      font-size: 13px;
     }
 
     .stat strong {
@@ -323,20 +310,21 @@
       margin-top: 5px;
     }
 
-    /* REPORT CARDS */
+    /* Report cards */
     .report-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      align-items: stretch;
     }
 
     .report-card {
       min-width: 0;
+      height: 100%;
       overflow: hidden;
       border-radius: 10px;
-      background: rgba(255, 255, 255, 0.73);
-      border: 1px solid rgba(255, 255, 255, 0.38);
-      box-shadow: 0 4px 13px rgba(0, 0, 0, 0.13);
+      background: rgba(255, 255, 255, .74);
+      box-shadow: 0 3px 12px #0002;
       display: flex;
       flex-direction: column;
     }
@@ -344,9 +332,10 @@
     .report-photo,
     .placeholder-photo {
       width: 100%;
-      height: 155px;
+      height: 135px;
+      flex-shrink: 0;
       object-fit: cover;
-      background: rgba(232, 238, 233, 0.7);
+      background: rgba(232, 238, 233, .7);
     }
 
     .placeholder-photo {
@@ -357,20 +346,20 @@
     }
 
     .report-content {
-      padding: 13px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
       flex: 1;
     }
 
     .report-content h3 {
-      font-size: 16px;
       margin: 8px 0;
+      font-size: 17px;
     }
 
     .report-content p {
       font-size: 13px;
-      line-height: 1.45;
+      line-height: 1.4;
       margin: 4px 0;
       overflow-wrap: anywhere;
     }
@@ -382,22 +371,22 @@
       border-radius: 999px;
       font-size: 11px;
       font-weight: bold;
-      background: rgba(216, 243, 223, 0.92);
-      color: #075c3b;
+      background: #d8f3df;
+      color: var(--green);
     }
 
     .found {
-      background: rgba(219, 234, 254, 0.92);
+      background: #dbeafe;
       color: #1d4ed8;
     }
 
     .pending {
-      background: rgba(255, 240, 194, 0.92);
+      background: #fff0c2;
       color: #795500;
     }
 
     .returned {
-      background: rgba(229, 231, 235, 0.92);
+      background: #e5e7eb;
       color: #374151;
     }
 
@@ -405,29 +394,30 @@
       display: flex;
       gap: 7px;
       flex-wrap: wrap;
-      margin-top: 10px;
+      margin-top: 12px;
     }
 
     .empty-state {
       text-align: center;
-      padding: 22px 15px;
+      padding: 22px 14px;
+      background: rgba(255, 255, 255, .68);
+      border-radius: 10px;
     }
 
     .detail-photo {
       max-width: 100%;
-      max-height: 350px;
+      max-height: 300px;
       object-fit: contain;
-      border-radius: 9px;
-      background: rgba(238, 242, 238, 0.7);
+      border-radius: 8px;
+      background: rgba(238, 242, 238, .7);
     }
 
     .detail-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 18px;
     }
 
-    /* ADMIN TABLE */
     .table-wrap {
       overflow-x: auto;
     }
@@ -435,7 +425,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      background: rgba(255, 255, 255, 0.82);
+      background: rgba(255, 255, 255, .88);
       font-size: 13px;
     }
 
@@ -443,17 +433,17 @@
     td {
       text-align: left;
       padding: 9px;
-      border-bottom: 1px solid rgba(225, 232, 227, 0.8);
+      border-bottom: 1px solid #e1e8e3;
       vertical-align: top;
     }
 
     th {
-      background: rgba(234, 244, 237, 0.92);
+      background: rgba(234, 244, 237, .94);
       color: var(--green);
     }
 
     td form {
-      min-width: 145px;
+      min-width: 130px;
     }
 
     .inline-form {
@@ -466,118 +456,66 @@
       min-width: 110px;
     }
 
-    /* FOOTER */
     .site-footer {
       text-align: center;
       padding: 16px 12px;
       color: white;
-      background: rgba(3, 50, 34, 0.82);
-      backdrop-filter: blur(4px);
+      background: rgba(3, 63, 42, .82);
       font-size: 12px;
-      margin-top: 20px;
     }
 
     .site-footer p {
       margin: 5px 0;
     }
 
-    /* TABLETS */
     @media (max-width: 800px) {
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .report-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .filter-grid,
+      .form-grid,
+      .detail-layout {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .container,
+      .hero {
+        width: 94%;
+      }
+    }
+
+    @media (max-width: 500px) {
+      .brand h1 {
+        font-size: 18px;
+      }
+
+      .stats,
+      .report-grid,
       .filter-grid,
       .form-grid,
       .detail-layout {
         grid-template-columns: 1fr;
       }
 
-      .stats {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .brand h1 {
-        font-size: 18px;
-      }
-
-      .container {
-        width: 92%;
+      .full {
+        grid-column: auto;
       }
 
       .hero {
-        width: 90%;
-        padding: 20px 16px;
-      }
-    }
-
-    /* MOBILE */
-    @media (max-width: 480px) {
-      .site-header {
-        padding: 11px 4%;
-      }
-
-      .header-inner {
-        align-items: flex-start;
-      }
-
-      nav {
-        width: 100%;
-      }
-
-      nav a {
-        font-size: 11px;
-        padding: 7px 8px;
-      }
-
-      .brand img {
-        width: 39px;
-        height: 39px;
-      }
-
-      .brand h1 {
-        font-size: 16px;
-      }
-
-      .brand p {
-        font-size: 10px;
-      }
-
-      .container {
-        width: 94%;
-        margin-top: 14px;
-      }
-
-      .hero {
-        width: 92%;
-        margin-top: 15px;
-        padding: 18px 13px;
-      }
-
-      .hero h2 {
-        font-size: 23px;
-      }
-
-      .hero p {
-        font-size: 12px;
+        padding: 18px 12px;
       }
 
       .panel {
-        padding: 13px;
-        margin-bottom: 12px;
+        padding: 11px;
       }
 
-      .stats {
-        gap: 8px;
-      }
-
-      .stat {
-        padding: 10px;
-        min-height: 78px;
-      }
-
-      .stat strong {
-        font-size: 20px;
-      }
-
-      .report-grid {
-        grid-template-columns: 1fr;
+      .site-header {
+        padding: 10px 4%;
       }
     }
   </style>
@@ -589,8 +527,7 @@
   <header class="site-header">
     <div class="header-inner">
       <div class="brand">
-        <img src="{{ campus_logo }}"
-             alt="SLSU JGE logo"
+        <img src="{{ campus_logo }}" alt="SLSU JGE logo"
              onerror="this.style.display='none'">
         <div>
           <h1>SLSU JGE FindHub</h1>
@@ -614,7 +551,7 @@
 
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-      <div class="container" style="margin-bottom:0">
+      <div class="container" style="margin-bottom: 0">
         {% for category, message in messages %}
           <div class="flash {{ category }}">{{ message }}</div>
         {% endfor %}
@@ -634,4 +571,3 @@
   </footer>
 </body>
 </html>
-```
