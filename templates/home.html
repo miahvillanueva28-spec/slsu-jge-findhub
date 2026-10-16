@@ -1,557 +1,233 @@
-```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SLSU JGE FindHub | Lost and Found</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}SLSU JGE FindHub{% endblock %}</title>
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  <style>
+    * { box-sizing: border-box; }
 
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f7f5;
-            color: #24332b;
-            line-height: 1.6;
-        }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      color: #203047;
+      line-height: 1.6;
+    }
 
-        header {
-            background: #075b36;
-            color: white;
-            padding: 16px 6%;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
+    header {
+      background: #12345a;
+      padding: 16px 22px;
+    }
 
-        header img {
-            width: 65px;
-            height: 65px;
-            object-fit: contain;
-            background: white;
-            border-radius: 50%;
-            padding: 4px;
-        }
+    .nav {
+      max-width: 1100px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
 
-        header h1 {
-            font-size: 23px;
-        }
+    .brand, .nav a {
+      color: white;
+      text-decoration: none;
+    }
 
-        header p {
-            font-size: 13px;
-            opacity: 0.9;
-        }
+    .brand {
+      font-size: 20px;
+      font-weight: bold;
+    }
 
-        nav {
-            margin-left: auto;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+    .navlinks {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
 
-        nav a, .button {
-            text-decoration: none;
-            background: #f4c542;
-            color: #173b28;
-            padding: 10px 15px;
-            border-radius: 7px;
-            font-weight: bold;
-            display: inline-block;
-            transition: background .2s, transform .2s;
-        }
+    main {
+      max-width: 1100px;
+      margin: 28px auto;
+      padding: 0 16px 40px;
+    }
 
-        nav a:hover, .button:hover {
-            background: #ffda63;
-            transform: translateY(-1px);
-        }
+    .panel {
+      background: white;
+      border: 1px solid #dce4ee;
+      border-radius: 14px;
+      padding: 22px;
+      margin-bottom: 20px;
+    }
 
-        .admin-button {
-            background: white;
-            color: #075b36;
-        }
+    h1, h2, h3 {
+      color: #12345a;
+    }
 
-        .admin-button:hover {
-            background: #e7f5eb;
-        }
+    label {
+      display: block;
+      font-weight: bold;
+      margin: 12px 0 6px;
+    }
 
-        .hero {
-            min-height: 320px;
-            padding: 55px 7%;
-            color: white;
-            background:
-                linear-gradient(90deg, rgba(0,45,25,.92), rgba(0,45,25,.52)),
-                url("https://www.slsu.edu.ph/wp-content/uploads/2023/05/Campuses/SLSU%20JGE%20Tagkawayan/JGE%20bldg.jpg")
-                center/cover;
-            display: flex;
-            align-items: center;
-        }
+    input, select, textarea {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font: inherit;
+    }
 
-        .hero-content {
-            max-width: 650px;
-        }
+    textarea {
+      min-height: 110px;
+    }
 
-        .hero h2 {
-            font-size: clamp(30px, 5vw, 46px);
-            line-height: 1.15;
-            margin-bottom: 15px;
-        }
+    button, .btn {
+      display: inline-block;
+      background: #1d5c91;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font: inherit;
+      text-decoration: none;
+      cursor: pointer;
+    }
 
-        .hero p {
-            margin-bottom: 25px;
-            font-size: 17px;
-        }
+    .secondary {
+      background: #e8eef5;
+      color: #12345a;
+    }
 
-        main {
-            width: 90%;
-            max-width: 1200px;
-            margin: 30px auto;
-        }
+    .danger {
+      background: #b42318;
+      color: white;
+    }
 
-        .flash-messages {
-            margin-bottom: 22px;
-        }
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
 
-        .flash {
-            padding: 14px 18px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border: 1px solid transparent;
-        }
+    .flash {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      background: #eaf2ff;
+      border: 1px solid #c8dcff;
+    }
 
-        .flash.success {
-            background: #dff5e5;
-            color: #155c30;
-            border-color: #b9e5c5;
-        }
+    .flash.success {
+      background: #eaf8f0;
+      border-color: #b9e5cc;
+    }
 
-        .flash.warning {
-            background: #fff3cd;
-            color: #775b00;
-            border-color: #ffe69c;
-        }
+    .flash.danger, .flash.error {
+      background: #fff0ef;
+      border-color: #ffd0cc;
+    }
 
-        .flash.danger, .flash.error {
-            background: #fce4e4;
-            color: #8b2020;
-            border-color: #f3bcbc;
-        }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
 
-        .flash.info {
-            background: #e1efff;
-            color: #174b80;
-            border-color: #bad8fa;
-        }
+    .table-wrap {
+      overflow-x: auto;
+    }
 
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 16px;
-            margin-bottom: 30px;
-        }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
 
-        .stat {
-            background: white;
-            padding: 22px;
-            border-radius: 12px;
-            box-shadow: 0 3px 14px #0000000c;
-            border-left: 5px solid #0b7545;
-        }
+    th, td {
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid #dce4ee;
+      vertical-align: top;
+    }
 
-        .stat h3 {
-            font-size: 30px;
-            color: #075b36;
-        }
+    th {
+      background: #f2f6fa;
+    }
 
-        .search-box, .report-card {
-            background: white;
-            border-radius: 12px;
-            padding: 22px;
-            box-shadow: 0 3px 14px #0000000c;
-        }
+    .pill {
+      display: inline-block;
+      background: #e9eef5;
+      padding: 3px 9px;
+      border-radius: 20px;
+    }
 
-        .search-box {
-            margin-bottom: 28px;
-        }
+    .item-photo {
+      max-width: 100%;
+      max-height: 360px;
+      border-radius: 10px;
+    }
 
-        .search-box h2, .section-title {
-            margin-bottom: 15px;
-        }
+    .muted {
+      color: #65748b;
+    }
 
-        .filters {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-            gap: 12px;
-            margin-top: 15px;
-        }
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #65748b;
+    }
 
-        input, select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #d3ddd6;
-            border-radius: 7px;
-            font-size: 15px;
-            background: white;
-        }
+    @media (max-width: 650px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
 
-        input:focus, select:focus {
-            outline: 2px solid #70b98d;
-            border-color: #075b36;
-        }
-
-        button {
-            cursor: pointer;
-            border: none;
-            font-size: 15px;
-        }
-
-        .green-button {
-            background: #075b36;
-            color: white;
-            padding: 12px 18px;
-            border-radius: 7px;
-            font-weight: bold;
-        }
-
-        .green-button:hover {
-            background: #0b7545;
-        }
-
-        .report-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 18px;
-        }
-
-        .report-card {
-            transition: transform .2s, box-shadow .2s;
-            overflow-wrap: anywhere;
-        }
-
-        .report-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 22px #00000012;
-        }
-
-        .report-card h3 {
-            color: #075b36;
-            margin: 10px 0;
-            font-size: 21px;
-        }
-
-        .report-card p {
-            margin: 7px 0;
-        }
-
-        .tag {
-            display: inline-block;
-            background: #e4f4e9;
-            color: #075b36;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: bold;
-            margin: 3px 4px 3px 0;
-        }
-
-        .status-open {
-            background: #e4f4e9;
-            color: #075b36;
-        }
-
-        .status-pending {
-            background: #fff0c2;
-            color: #775500;
-        }
-
-        .status-returned {
-            background: #dcecff;
-            color: #174b80;
-        }
-
-        .empty {
-            background: white;
-            padding: 35px;
-            text-align: center;
-            border-radius: 12px;
-            grid-column: 1 / -1;
-            box-shadow: 0 3px 14px #0000000c;
-        }
-
-        .empty h3 {
-            color: #075b36;
-            margin-bottom: 8px;
-        }
-
-        .empty .button {
-            margin-top: 15px;
-        }
-
-        footer {
-            text-align: center;
-            padding: 25px;
-            margin-top: 45px;
-            background: #073d27;
-            color: white;
-        }
-
-        footer p {
-            margin: 4px 0;
-        }
-
-        @media (max-width: 650px) {
-            header {
-                justify-content: center;
-                text-align: center;
-            }
-
-            nav {
-                margin: 5px auto 0;
-                justify-content: center;
-            }
-
-            .hero {
-                padding: 40px 6%;
-            }
-
-            main {
-                width: 92%;
-            }
-        }
-    </style>
+      .panel {
+        padding: 16px;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <header>
+    <div class="nav">
+      <a class="brand" href="{{ url_for('home') }}">
+        SLSU JGE FindHub
+      </a>
 
-<header>
-    <img
-        src="{{ campus_logo }}"
-        alt="SLSU JGE Logo"
-    >
-
-    <div>
-        <h1>SLSU JGE FindHub</h1>
-        <p>Southern Luzon State University — Tagkawayan Campus</p>
-        <p>Lost and Found Information System</p>
-    </div>
-
-    <nav>
+      <div class="navlinks">
         <a href="{{ url_for('home') }}">Home</a>
         <a href="{{ url_for('new_report') }}">Report an Item</a>
 
-        {% if admin_logged_in %}
-            <a class="admin-button" href="{{ url_for('admin_dashboard') }}">
-                Admin Dashboard
-            </a>
-            <a class="admin-button" href="{{ url_for('admin_logout') }}">
-                Log Out
-            </a>
+        {% if admin_logged_in|default(false) %}
+          <a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a>
+          <a href="{{ url_for('admin_logout') }}">Log Out</a>
         {% else %}
-            <a class="admin-button" href="{{ url_for('admin_login') }}">
-                Admin Login
-            </a>
+          <a href="{{ url_for('admin_login') }}">Admin Login</a>
         {% endif %}
-    </nav>
-</header>
-
-<section class="hero">
-    <div class="hero-content">
-        <h2>Lost something? Let's help you find it.</h2>
-        <p>
-            A campus community platform where students and personnel
-            can report lost belongings and share found items.
-        </p>
-        <a class="button" href="{{ url_for('new_report') }}">
-            + Report Lost or Found Item
-        </a>
+      </div>
     </div>
-</section>
+  </header>
 
-<main>
-
-    <!-- Submission and validation messages -->
+  <main>
     {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <section class="flash-messages" aria-live="polite">
-                {% for category, message in messages %}
-                    <div class="flash {{ category }}" role="alert">
-                        {% if category == 'success' %}
-                            <strong>✓ Success!</strong>
-                        {% elif category == 'warning' %}
-                            <strong>⚠ Notice:</strong>
-                        {% elif category == 'danger' or category == 'error' %}
-                            <strong>✕ Error:</strong>
-                        {% else %}
-                            <strong>Information:</strong>
-                        {% endif %}
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </section>
-        {% endif %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
     {% endwith %}
 
-    <section class="stats">
-        <div class="stat">
-            <p>Open Reports</p>
-            <h3>{{ total_open }}</h3>
-        </div>
+    {% block content %}{% endblock %}
+  </main>
 
-        <div class="stat">
-            <p>Items Found</p>
-            <h3>{{ total_found }}</h3>
-        </div>
-
-        <div class="stat">
-            <p>Items Lost</p>
-            <h3>{{ total_lost }}</h3>
-        </div>
-    </section>
-
-    <section class="search-box">
-        <h2>Find an Item</h2>
-        <p>Search by item name, description, location, or category.</p>
-
-        <form method="GET" action="{{ url_for('home') }}">
-            <div class="filters">
-                <input
-                    type="search"
-                    name="q"
-                    placeholder="Search items..."
-                    value="{{ q }}"
-                    aria-label="Search items"
-                >
-
-                <select name="type" aria-label="Report type">
-                    <option value="">All report types</option>
-                    <option value="Lost"
-                        {% if kind == 'Lost' %}selected{% endif %}>
-                        Lost Item
-                    </option>
-                    <option value="Found"
-                        {% if kind == 'Found' %}selected{% endif %}>
-                        Found Item
-                    </option>
-                </select>
-
-                <select name="category" aria-label="Item category">
-                    <option value="">All categories</option>
-                    {% for item_category in categories %}
-                        <option value="{{ item_category }}"
-                            {% if category == item_category %}selected{% endif %}>
-                            {{ item_category }}
-                        </option>
-                    {% endfor %}
-                </select>
-
-                <select name="status" aria-label="Report status">
-                    <option value="">All statuses</option>
-                    <option value="Open"
-                        {% if status == 'Open' %}selected{% endif %}>
-                        Open
-                    </option>
-                    <option value="Pending Claim"
-                        {% if status == 'Pending Claim' %}selected{% endif %}>
-                        Pending Claim
-                    </option>
-                    <option value="Returned"
-                        {% if status == 'Returned' %}selected{% endif %}>
-                        Returned
-                    </option>
-                </select>
-
-                <button class="green-button" type="submit">
-                    Search
-                </button>
-            </div>
-        </form>
-    </section>
-
-    <h2 class="section-title">Recent Reports</h2>
-
-    <section class="report-grid">
-        {% for report in reports %}
-            <article class="report-card">
-
-                <span class="tag">
-                    {{ report.report_type|title }}
-                </span>
-
-                <span class="tag
-                    {% if report.status == 'Open' %}status-open
-                    {% elif report.status == 'Pending Claim' %}status-pending
-                    {% elif report.status == 'Returned' %}status-returned
-                    {% endif %}">
-                    {{ report.status|title }}
-                </span>
-
-                <h3>{{ report.item_name }}</h3>
-
-                <p>
-                    <strong>Category:</strong>
-                    {{ report.category }}
-                </p>
-
-                <p>
-                    <strong>Location:</strong>
-                    {{ report.location or 'Not specified' }}
-                </p>
-
-                <p>
-                    {{ (report.description or 'No description provided')[:150] }}
-                    {% if report.description and report.description|length > 150 %}...{% endif %}
-                </p>
-
-                {% if report.photo %}
-                    <p>
-                        <a href="{{ url_for('uploaded_photo', filename=report.photo) }}"
-                           target="_blank" rel="noopener">
-                            View item photo
-                        </a>
-                    </p>
-                {% endif %}
-
-                <p>
-                    <small>
-                        Reported:
-                        {{ report.created_at.strftime('%b %d, %Y') if report.created_at else 'Date unavailable' }}
-                    </small>
-                </p>
-
-                <p style="margin-top: 15px;">
-                    <a class="button"
-                       href="{{ url_for('report_detail', report_id=report.id) }}">
-                        View Details
-                    </a>
-                </p>
-
-            </article>
-        {% else %}
-            <div class="empty">
-                <h3>No reports found</h3>
-                <p>
-                    Try another search, or submit a new lost or found item report.
-                </p>
-                <a class="button" href="{{ url_for('new_report') }}">
-                    Submit a Report
-                </a>
-            </div>
-        {% endfor %}
-    </section>
-
-</main>
-
-<footer>
-    <p><strong>SLSU JGE FindHub</strong></p>
-    <p>Lost and Found Information System | Tagkawayan Campus</p>
-    <p>Helping our campus community reconnect with their belongings.</p>
-</footer>
-
+  <footer>
+    SLSU JGE FindHub · Lost and Found
+  </footer>
 </body>
 </html>
-```
