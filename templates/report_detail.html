@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Report Details | SLSU JGE FindHub{% endblock %}
+
+{% block content %}
+<section class="panel">
+  <p><a href="{{ url_for('home') }}">← Back to Home</a></p>
+
+  <h1>{{ report.item_name }}</h1>
+
+  <p>
+    <span class="pill">{{ report.report_type }}</span>
+    <span class="pill">{{ report.status }}</span>
+  </p>
+
+  {% if report.photo %}
+    <p>
+      <img
+        class="item-photo"
+        src="{{ url_for('uploaded_photo', filename=report.photo) }}"
+        alt="Photo of {{ report.item_name }}"
+      >
+    </p>
+  {% endif %}
+
+  <h2>Item Details</h2>
+
+  <p><strong>Category:</strong> {{ report.category }}</p>
+  <p><strong>Description:</strong><br>{{ report.description }}</p>
+  <p><strong>Location:</strong> {{ report.location }}</p>
+  <p><strong>Date:</strong> {{ report.incident_date }}</p>
+  <p><strong>Posted:</strong> {{ report.created_at }}</p>
+</section>
+
+<section class="panel">
+  <h2>Contact Information</h2>
+
+  {% if report.contact_public %}
+    <p><strong>Name:</strong> {{ report.contact_name }}</p>
+    <p><strong>Contact:</strong> {{ report.contact }}</p>
+  {% else %}
+    <p>
+      The reporter has chosen not to display their contact information
+      publicly. Please contact the campus administrator for assistance.
+    </p>
+  {% endif %}
+</section>
+
+<section class="panel">
+  <h2>Claim This Item</h2>
+  <p class="muted">
+    If this item belongs to you, provide details that can help verify ownership.
+  </p>
+
+  <form
+    method="POST"
+    action="{{ url_for('submit_claim', report_id=report.id) }}"
+  >
+    <label for="claimant_name">Your Name *</label>
+    <input id="claimant_name" name="claimant_name" required>
+
+    <label for="claimant_contact">Your Contact Information *</label>
+    <input id="claimant_contact" name="claimant_contact" required>
+
+    <label for="claim_message">Proof of Ownership *</label>
+    <textarea
+      id="claim_message"
+      name="claim_message"
+      placeholder="Describe identifying details that only the owner would know."
+      required
+    ></textarea>
+
+    <div class="actions">
+      <button type="submit">Submit Claim</button>
+    </div>
+  </form>
+</section>
+{% endblock %}
