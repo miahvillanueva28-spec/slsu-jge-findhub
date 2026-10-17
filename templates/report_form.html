@@ -1,3 +1,4 @@
+```html
 {% extends "base.html" %}
 {% block title %}Submit a Report | FindHub{% endblock %}
 
@@ -49,7 +50,9 @@
       </div>
 
       <div>
-        <label for="incident_date">Date lost or found *</label>
+        <label for="incident_date" id="incident-date-label">
+          Date Lost or Found *
+        </label>
         <input
           id="incident_date"
           type="date"
@@ -138,4 +141,25 @@
     </div>
   </form>
 </section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const reportType = document.getElementById("report_type");
+  const dateLabel = document.getElementById("incident-date-label");
+
+  function updateDateLabel() {
+    if (reportType.value === "Lost") {
+      dateLabel.textContent = "Date Lost *";
+    } else if (reportType.value === "Found") {
+      dateLabel.textContent = "Date Found *";
+    } else {
+      dateLabel.textContent = "Date Lost or Found *";
+    }
+  }
+
+  reportType.addEventListener("change", updateDateLabel);
+  updateDateLabel();
+});
+</script>
 {% endblock %}
+```
