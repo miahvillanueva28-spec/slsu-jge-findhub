@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -17,6 +18,10 @@
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -25,6 +30,7 @@
       background:
         linear-gradient(rgba(3, 35, 23, .18), rgba(3, 35, 23, .24)),
         url("{{ campus_photo }}") center center / cover fixed no-repeat;
+      background-color: #f4f7f4;
     }
 
     a {
@@ -36,6 +42,9 @@
       color: white;
       padding: 12px 4%;
       box-shadow: 0 3px 12px #0002;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: box-shadow .3s ease;
     }
 
     .header-inner {
@@ -61,6 +70,11 @@
       border-radius: 50%;
       background: white;
       padding: 3px;
+      transition: transform .3s ease;
+    }
+
+    .brand img:hover {
+      transform: rotate(-5deg) scale(1.05);
     }
 
     .brand h1 {
@@ -87,11 +101,18 @@
       padding: 8px 10px;
       border: 1px solid #ffffff80;
       border-radius: 7px;
+      transition:
+        background-color .2s ease,
+        color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
     }
 
     nav a:hover {
       background: white;
       color: var(--green);
+      box-shadow: 0 3px 10px #0002;
+      transform: translateY(-1px);
     }
 
     .container {
@@ -107,6 +128,11 @@
       padding: 14px;
       box-shadow: 0 3px 12px #0002;
       margin-bottom: 14px;
+      transition: box-shadow .25s ease;
+    }
+
+    .panel:hover {
+      box-shadow: 0 8px 22px rgba(0, 45, 25, .12);
     }
 
     /* Top hero cover */
@@ -119,6 +145,11 @@
       padding: 22px 18px;
       text-align: center;
       box-shadow: 0 3px 12px #0002;
+      transition: box-shadow .25s ease;
+    }
+
+    .hero:hover {
+      box-shadow: 0 8px 24px rgba(0, 45, 25, .13);
     }
 
     .hero h2 {
@@ -146,12 +177,19 @@
       text-decoration: none;
       cursor: pointer;
       font-size: 13px;
+      transition:
+        background-color .2s ease,
+        color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
     }
 
     .button:hover,
     button:hover {
       background: var(--deep);
       color: white;
+      box-shadow: 0 5px 12px rgba(0, 60, 35, .18);
+      transform: translateY(-1px);
     }
 
     .secondary {
@@ -188,6 +226,11 @@
       font-weight: bold;
       font-size: 12px;
       color: var(--green);
+      transition: box-shadow .2s ease;
+    }
+
+    .sticker:hover {
+      box-shadow: 0 4px 10px rgba(0, 60, 35, .10);
     }
 
     .sticker span {
@@ -203,6 +246,7 @@
       color: #155c2e;
       border-left: 4px solid #198754;
       font-size: 13px;
+      animation: fadeIn .3s ease;
     }
 
     .flash.warning {
@@ -249,6 +293,19 @@
       font-size: 13px;
       background: rgba(255, 255, 255, .92);
       color: var(--ink);
+      transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background-color .2s ease;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--bright);
+      box-shadow: 0 0 0 3px rgba(8, 118, 71, .12);
+      background: #fff;
+      outline: none;
     }
 
     textarea {
@@ -300,6 +357,14 @@
       flex-direction: column;
       justify-content: center;
       font-size: 13px;
+      transition:
+        box-shadow .25s ease,
+        transform .25s ease;
+    }
+
+    .stat:hover {
+      box-shadow: 0 8px 22px rgba(0, 45, 25, .12);
+      transform: translateY(-2px);
     }
 
     .stat strong {
@@ -326,6 +391,14 @@
       box-shadow: 0 3px 12px #0002;
       display: flex;
       flex-direction: column;
+      transition:
+        box-shadow .25s ease,
+        transform .25s ease;
+    }
+
+    .report-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(0, 45, 25, .18);
     }
 
     .report-photo,
@@ -335,6 +408,14 @@
       flex-shrink: 0;
       object-fit: cover;
       background: rgba(232, 238, 233, .7);
+    }
+
+    .report-photo {
+      transition: transform .35s ease;
+    }
+
+    .report-card:hover .report-photo {
+      transform: scale(1.025);
     }
 
     .placeholder-photo {
@@ -354,6 +435,7 @@
     .report-content h3 {
       margin: 8px 0;
       font-size: 17px;
+      overflow-wrap: anywhere;
     }
 
     .report-content p {
@@ -372,6 +454,7 @@
       font-weight: bold;
       background: #d8f3df;
       color: var(--green);
+      transition: box-shadow .2s ease;
     }
 
     .found {
@@ -401,6 +484,12 @@
       padding: 22px 14px;
       background: rgba(255, 255, 255, .68);
       border-radius: 10px;
+      box-shadow: 0 3px 12px #0002;
+      transition: box-shadow .25s ease;
+    }
+
+    .empty-state:hover {
+      box-shadow: 0 8px 22px rgba(0, 45, 25, .12);
     }
 
     .detail-photo {
@@ -441,6 +530,14 @@
       color: var(--green);
     }
 
+    tbody tr {
+      transition: background-color .2s ease;
+    }
+
+    tbody tr:hover {
+      background-color: rgba(8, 118, 71, .055);
+    }
+
     td form {
       min-width: 130px;
     }
@@ -461,10 +558,33 @@
       color: white;
       background: rgba(3, 63, 42, .82);
       font-size: 12px;
+      box-shadow: 0 -3px 14px rgba(0, 0, 0, .06);
     }
 
     .site-footer p {
       margin: 5px 0;
+    }
+
+    /* Subtle entrance animation */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Visible keyboard focus */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+      outline: 3px solid #d5b45b;
+      outline-offset: 3px;
     }
 
     @media (max-width: 800px) {
@@ -516,6 +636,32 @@
       .site-header {
         padding: 10px 4%;
       }
+
+      nav a {
+        font-size: 11px;
+        padding: 7px 8px;
+      }
+    }
+
+    /* Respect reduced-motion preferences */
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+
+      .report-card:hover,
+      .button:hover,
+      button:hover,
+      .stat:hover {
+        transform: none;
+      }
     }
   </style>
 
@@ -526,8 +672,11 @@
   <header class="site-header">
     <div class="header-inner">
       <div class="brand">
-        <img src="{{ campus_logo }}" alt="SLSU JGE logo"
-             onerror="this.style.display='none'">
+        <img
+          src="{{ campus_logo }}"
+          alt="SLSU JGE logo"
+          onerror="this.style.display='none'"
+        >
         <div>
           <h1>SLSU JGE FindHub</h1>
           <p>Lost and Found Information System</p>
