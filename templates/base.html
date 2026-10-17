@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#075c3b">
+  <meta name="description" content="SLSU JGE FindHub - Lost and Found Information System">
 
   <title>{% block title %}SLSU JGE FindHub{% endblock %}</title>
 
@@ -15,17 +16,13 @@
       --bright: #087647;
       --ink: #24332b;
       --muted: #5c6b61;
-      --glass: rgba(255, 255, 255, .78);
-      --glass-border: rgba(255, 255, 255, .62);
       --shadow: 0 5px 18px rgba(0, 35, 20, .10);
       --shadow-hover: 0 12px 30px rgba(0, 45, 25, .17);
       --radius: 12px;
       --transition: .25s ease;
     }
 
-    *,
-    *::before,
-    *::after {
+    *, *::before, *::after {
       box-sizing: border-box;
     }
 
@@ -75,7 +72,7 @@
     .site-header {
       position: relative;
       z-index: 10;
-      background: rgba(5, 55, 37, .91);
+      background: rgba(5, 55, 37, .93);
       color: white;
       padding: 13px 4%;
       box-shadow: 0 4px 18px rgba(0, 0, 0, .14);
@@ -112,9 +109,7 @@
       padding: 3px;
       border: 2px solid rgba(255, 255, 255, .7);
       box-shadow: 0 3px 10px rgba(0, 0, 0, .15);
-      transition:
-        transform .35s ease,
-        box-shadow .35s ease;
+      transition: transform .35s ease, box-shadow .35s ease;
     }
 
     .brand img:hover {
@@ -152,12 +147,11 @@
       border: 1px solid rgba(255, 255, 255, .30);
       border-radius: 8px;
       background: rgba(255, 255, 255, .045);
-      transition:
-        background-color var(--transition),
-        color var(--transition),
-        border-color var(--transition),
-        box-shadow var(--transition),
-        transform var(--transition);
+      transition: background-color var(--transition),
+                  color var(--transition),
+                  border-color var(--transition),
+                  box-shadow var(--transition),
+                  transform var(--transition);
     }
 
     nav a:hover {
@@ -186,20 +180,19 @@
 
     /* General panels */
     .panel {
-      background: rgba(255, 255, 255, .80);
-      border: 1px solid rgba(255, 255, 255, .62);
+      background: rgba(255, 255, 255, .86);
+      border: 1px solid rgba(255, 255, 255, .72);
       border-radius: var(--radius);
       padding: 16px;
       box-shadow: var(--shadow);
       margin-bottom: 15px;
-      transition:
-        box-shadow var(--transition),
-        border-color var(--transition);
+      transition: box-shadow var(--transition),
+                  border-color var(--transition);
     }
 
     .panel:hover {
       box-shadow: var(--shadow-hover);
-      border-color: rgba(255, 255, 255, .88);
+      border-color: white;
     }
 
     /* Hero */
@@ -207,8 +200,8 @@
       width: 92%;
       max-width: 1050px;
       margin: 20px auto 16px;
-      background: rgba(235, 246, 238, .84);
-      border: 1px solid rgba(255, 255, 255, .72);
+      background: rgba(235, 246, 238, .88);
+      border: 1px solid rgba(255, 255, 255, .78);
       border-radius: 15px;
       padding: 25px 20px;
       text-align: center;
@@ -216,14 +209,6 @@
       backdrop-filter: blur(7px);
       -webkit-backdrop-filter: blur(7px);
       animation: contentEnter .6s ease both;
-      transition:
-        box-shadow var(--transition),
-        border-color var(--transition);
-    }
-
-    .hero:hover {
-      box-shadow: var(--shadow-hover);
-      border-color: white;
     }
 
     .hero h2 {
@@ -241,8 +226,7 @@
     }
 
     /* Buttons */
-    .button,
-    button {
+    .button, button {
       display: inline-block;
       border: 1px solid transparent;
       border-radius: 8px;
@@ -256,26 +240,22 @@
       font-size: 13px;
       line-height: 1.35;
       box-shadow: 0 2px 5px rgba(0, 50, 30, .08);
-      transition:
-        background-color var(--transition),
-        color var(--transition),
-        border-color var(--transition),
-        box-shadow var(--transition),
-        transform var(--transition);
+      transition: background-color var(--transition),
+                  color var(--transition),
+                  border-color var(--transition),
+                  box-shadow var(--transition),
+                  transform var(--transition);
     }
 
-    .button:hover,
-    button:hover {
+    .button:hover, button:hover {
       background: var(--deep);
       color: white;
       box-shadow: 0 6px 15px rgba(0, 60, 35, .20);
       transform: translateY(-2px);
     }
 
-    .button:active,
-    button:active {
+    .button:active, button:active {
       transform: translateY(0) scale(.98);
-      box-shadow: 0 2px 5px rgba(0, 50, 30, .12);
     }
 
     .secondary {
@@ -328,10 +308,9 @@
       font-weight: bold;
       font-size: 12px;
       color: var(--green);
-      transition:
-        box-shadow var(--transition),
-        border-color var(--transition),
-        transform var(--transition);
+      transition: box-shadow var(--transition),
+                  border-color var(--transition),
+                  transform var(--transition);
     }
 
     .sticker:hover {
@@ -365,8 +344,7 @@
       border-left-color: #d49b00;
     }
 
-    .flash.danger,
-    .flash.error {
+    .flash.danger, .flash.error {
       background: #f8d7da;
       color: #842029;
       border-color: rgba(180, 35, 50, .15);
@@ -374,8 +352,7 @@
     }
 
     /* Headings and form fields */
-    h2,
-    h3 {
+    h2, h3 {
       color: var(--green);
     }
 
@@ -396,40 +373,32 @@
       font-size: 13px;
     }
 
-    input,
-    select,
-    textarea {
+    input, select, textarea {
       width: 100%;
       padding: 10px;
       border: 1px solid #c8d5cc;
       border-radius: 8px;
       font: inherit;
       font-size: 13px;
-      background: rgba(255, 255, 255, .94);
+      background: rgba(255, 255, 255, .96);
       color: var(--ink);
-      transition:
-        border-color var(--transition),
-        box-shadow var(--transition),
-        background-color var(--transition);
+      transition: border-color var(--transition),
+                  box-shadow var(--transition),
+                  background-color var(--transition);
     }
 
-    input:hover,
-    select:hover,
-    textarea:hover {
+    input:hover, select:hover, textarea:hover {
       border-color: #9ab7a3;
     }
 
-    input:focus,
-    select:focus,
-    textarea:focus {
+    input:focus, select:focus, textarea:focus {
       border-color: var(--bright);
       box-shadow: 0 0 0 3px rgba(8, 118, 71, .13);
       background: #fff;
       outline: none;
     }
 
-    input::placeholder,
-    textarea::placeholder {
+    input::placeholder, textarea::placeholder {
       color: #7c8980;
       opacity: 1;
     }
@@ -439,8 +408,7 @@
       resize: vertical;
     }
 
-    input[type="checkbox"],
-    input[type="radio"] {
+    input[type="checkbox"], input[type="radio"] {
       width: auto;
       accent-color: var(--bright);
     }
@@ -499,19 +467,16 @@
       min-height: 88px;
       padding: 14px;
       border-radius: 12px;
-      background: rgba(255, 255, 255, .83);
+      background: rgba(255, 255, 255, .88);
       border: 1px solid rgba(255, 255, 255, .70);
       box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
       justify-content: center;
       font-size: 13px;
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
-      transition:
-        box-shadow var(--transition),
-        transform var(--transition),
-        border-color var(--transition);
+      transition: box-shadow var(--transition),
+                  transform var(--transition),
+                  border-color var(--transition);
     }
 
     .stat:hover {
@@ -541,15 +506,14 @@
       height: 100%;
       overflow: hidden;
       border-radius: 12px;
-      background: rgba(255, 255, 255, .86);
+      background: rgba(255, 255, 255, .90);
       border: 1px solid rgba(255, 255, 255, .72);
       box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
-      transition:
-        box-shadow var(--transition),
-        transform var(--transition),
-        border-color var(--transition);
+      transition: box-shadow var(--transition),
+                  transform var(--transition),
+                  border-color var(--transition);
     }
 
     .report-card:hover {
@@ -558,8 +522,7 @@
       border-color: white;
     }
 
-    .report-photo,
-    .placeholder-photo {
+    .report-photo, .placeholder-photo {
       width: 100%;
       height: 145px;
       flex-shrink: 0;
@@ -568,11 +531,12 @@
     }
 
     .report-photo {
+      cursor: zoom-in;
       transition: transform .45s ease;
     }
 
     .report-card:hover .report-photo {
-      transform: scale(1.04);
+      transform: scale(1.02);
     }
 
     .placeholder-photo {
@@ -611,14 +575,6 @@
       font-weight: bold;
       background: #d8f3df;
       color: var(--green);
-      transition:
-        box-shadow var(--transition),
-        transform var(--transition);
-    }
-
-    .tag:hover {
-      box-shadow: 0 3px 8px rgba(0, 50, 30, .10);
-      transform: translateY(-1px);
     }
 
     .found {
@@ -648,15 +604,10 @@
     .empty-state {
       text-align: center;
       padding: 25px 16px;
-      background: rgba(255, 255, 255, .82);
+      background: rgba(255, 255, 255, .88);
       border: 1px solid rgba(255, 255, 255, .65);
       border-radius: 12px;
       box-shadow: var(--shadow);
-      transition: box-shadow var(--transition);
-    }
-
-    .empty-state:hover {
-      box-shadow: var(--shadow-hover);
     }
 
     /* Detail view */
@@ -667,6 +618,7 @@
       border-radius: 9px;
       background: rgba(238, 242, 238, .85);
       box-shadow: 0 3px 10px rgba(0, 35, 20, .08);
+      cursor: zoom-in;
     }
 
     .detail-layout {
@@ -685,12 +637,11 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      background: rgba(255, 255, 255, .92);
+      background: rgba(255, 255, 255, .94);
       font-size: 13px;
     }
 
-    th,
-    td {
+    th, td {
       text-align: left;
       padding: 10px;
       border-bottom: 1px solid #e1e8e3;
@@ -702,10 +653,6 @@
       color: var(--green);
       font-weight: bold;
       white-space: nowrap;
-    }
-
-    tbody tr {
-      transition: background-color .2s ease;
     }
 
     tbody tr:hover {
@@ -730,13 +677,126 @@
       min-width: 110px;
     }
 
+    /* Toast notifications */
+    .toast-container {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 4000;
+      display: grid;
+      gap: 10px;
+      width: min(360px, calc(100vw - 36px));
+      pointer-events: none;
+    }
+
+    .toast {
+      padding: 13px 16px;
+      border-radius: 10px;
+      background: #176b3a;
+      color: white;
+      box-shadow: var(--shadow-hover);
+      border-left: 5px solid #9be0ad;
+      font-size: 14px;
+      animation: toastEnter .25s ease-out both;
+      overflow-wrap: anywhere;
+    }
+
+    .toast.error {
+      background: #b42332;
+      border-left-color: #ffd0d4;
+    }
+
+    .toast.warning {
+      background: #805d08;
+      border-left-color: #ffdf82;
+    }
+
+    .toast.removing {
+      opacity: 0;
+      transform: translateX(15px);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+
+    /* Image preview modal */
+    .image-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 5000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(0, 0, 0, .88);
+    }
+
+    .image-modal.open {
+      display: flex;
+    }
+
+    .image-modal img {
+      display: block;
+      max-width: min(100%, 1100px);
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: 8px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, .35);
+    }
+
+    .image-modal-close {
+      position: absolute;
+      top: 12px;
+      right: 20px;
+      border: 0;
+      background: transparent;
+      color: white;
+      font-size: 36px;
+      line-height: 1;
+      padding: 8px 12px;
+      cursor: pointer;
+      box-shadow: none;
+    }
+
+    .image-modal-close:hover {
+      background: rgba(255, 255, 255, .15);
+      transform: none;
+    }
+
+    /* Loading spinner */
+    .spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(255, 255, 255, .45);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      vertical-align: middle;
+    }
+
+    /* Loading skeleton */
+    .skeleton {
+      background: linear-gradient(
+        90deg,
+        #e8eee9 25%,
+        #f6f8f6 50%,
+        #e8eee9 75%
+      );
+      background-size: 200% 100%;
+      animation: skeletonLoading 1.4s infinite;
+      border-radius: 8px;
+    }
+
+    .skeleton-card {
+      height: 220px;
+    }
+
     /* Footer */
     .site-footer {
       text-align: center;
       padding: 18px 12px;
       margin-top: auto;
       color: white;
-      background: rgba(3, 63, 42, .91);
+      background: rgba(3, 63, 42, .94);
       border-top: 1px solid rgba(255, 255, 255, .14);
       font-size: 12px;
       box-shadow: 0 -4px 16px rgba(0, 0, 0, .08);
@@ -750,36 +810,31 @@
 
     /* Animations */
     @keyframes headerEnter {
-      from {
-        opacity: 0;
-        transform: translateY(-8px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes contentEnter {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes flashEnter {
-      from {
-        opacity: 0;
-        transform: translateY(-7px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(-7px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes toastEnter {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes skeletonLoading {
+      to { background-position: -200% 0; }
     }
 
     /* Accessible keyboard focus */
@@ -898,8 +953,7 @@
         height: 175px;
       }
 
-      th,
-      td {
+      th, td {
         padding: 8px;
       }
 
@@ -910,6 +964,16 @@
 
       .inline-form select {
         width: 100%;
+      }
+
+      .toast-container {
+        top: 10px;
+        right: 10px;
+        width: calc(100vw - 20px);
+      }
+
+      .image-modal {
+        padding: 12px;
       }
     }
 
@@ -927,17 +991,14 @@
         transition-duration: .01ms !important;
         scroll-behavior: auto !important;
       }
-
-      .report-card:hover,
-      .button:hover,
-      button:hover,
-      .stat:hover,
-      nav a:hover,
-      .sticker:hover {
-        transform: none;
-      }
     }
   </style>
+
+  <!-- Additional CSS file -->
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='style.css') }}"
+  >
 
   {% block head %}{% endblock %}
 </head>
@@ -971,11 +1032,14 @@
     </div>
   </header>
 
+  <!-- Flask flash messages -->
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
       <div class="container" style="margin-bottom: 0">
         {% for category, message in messages %}
-          <div class="flash {{ category }}" role="status">{{ message }}</div>
+          <div class="flash {{ category }}" role="status">
+            {{ message }}
+          </div>
         {% endfor %}
       </div>
     {% endif %}
@@ -991,5 +1055,42 @@
     <p>🎒 🔑 📱 🪪 Helping the SLSU JGE community find what matters.</p>
     <p>&copy; {{ today.year }} SLSU JGE FindHub</p>
   </footer>
+
+  <!-- Toast notifications container -->
+  <div
+    id="toast-container"
+    class="toast-container"
+    aria-live="polite"
+    aria-atomic="true"
+  ></div>
+
+  <!-- Image preview modal -->
+  <div
+    id="image-modal"
+    class="image-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Image preview"
+    aria-hidden="true"
+  >
+    <button
+      type="button"
+      id="image-modal-close"
+      class="image-modal-close"
+      aria-label="Close image preview"
+    >&times;</button>
+
+    <img
+      id="image-modal-photo"
+      src=""
+      alt="Enlarged item photo"
+    >
+  </div>
+
+  <!-- FindHub JavaScript -->
+  <script
+    src="{{ url_for('static', filename='script.js') }}"
+    defer
+  ></script>
 </body>
 </html>
