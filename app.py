@@ -53,7 +53,6 @@ CATEGORIES = [
     "Other",
 ]
 
-# SLSU JGE Tagkawayan campus images
 CAMPUS_LOGO = (
     "https://www.slsu.edu.ph/wp-content/uploads/2023/05/"
     "Campuses/Campus-Logo/SLSU-JGE-Logo.png"
@@ -187,25 +186,22 @@ def home():
 
     reports = query.order_by(Report.created_at.desc()).all()
 
-    total_open = Report.query.filter_by(status="Open").count()
+    # Active reports: exclude Returned and Archived reports.
+    total_open = Report.query.filter(
+        Report.status.notin_(["Returned", "Archived"])
+    ).count()
 
-    total_found = (
-        Report.query
-        .filter(
-            Report.report_type == "Found",
-            Report.status != "Archived"
-        )
-        .count()
-    )
+    # Lost reports: exclude archived reports.
+    total_lost = Report.query.filter(
+        Report.report_type == "Lost",
+        Report.status != "Archived"
+    ).count()
 
-    total_lost = (
-        Report.query
-        .filter(
-            Report.report_type == "Lost",
-            Report.status != "Archived"
-        )
-        .count()
-    )
+    # Found reports: exclude archived reports.
+    total_found = Report.query.filter(
+        Report.report_type == "Found",
+        Report.status != "Archived"
+    ).count()
 
     return render_template(
         "home.html",
@@ -215,8 +211,8 @@ def home():
         status=status,
         q=search,
         total_open=total_open,
-        total_found=total_found,
         total_lost=total_lost,
+        total_found=total_found,
         categories=CATEGORIES,
     )
 
