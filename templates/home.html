@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block title %}Home | SLSU JGE FindHub{% endblock %}
@@ -12,7 +11,7 @@
     <span class="sticker"><span>🪪</span> School IDs</span>
   </div>
 
-  <h2>Lost Something? Found Something? </h2>
+  <h2>Lost Something? Found Something?</h2>
 
   <p>
     Welcome to SLSU JGE FindHub! Report lost belongings,
@@ -28,21 +27,20 @@
 
 {% block content %}
 
-<!-- Four equal-sized statistics boxes -->
 <section class="stats">
   <div class="stat">
     <span>📌 Active reports</span>
-    <strong>{{ active_count|default(0) }}</strong>
+    <strong>{{ total_open|default(0) }}</strong>
   </div>
 
   <div class="stat">
     <span>🎒 Lost items</span>
-    <strong>{{ lost_count|default(0) }}</strong>
+    <strong>{{ total_lost|default(0) }}</strong>
   </div>
 
   <div class="stat">
     <span>🔎 Found items</span>
-    <strong>{{ found_count|default(0) }}</strong>
+    <strong>{{ total_found|default(0) }}</strong>
   </div>
 
   <div class="stat">
@@ -51,7 +49,6 @@
   </div>
 </section>
 
-<!-- Separate, smaller search box -->
 <section class="panel">
   <h2>🔎 Find an Item</h2>
 
@@ -64,14 +61,14 @@
         value="{{ request.args.get('q', '') }}"
       >
 
-      <select name="report_type">
+      <select name="type">
         <option value="">All report types</option>
         <option value="Lost"
-          {% if request.args.get('report_type') == 'Lost' %}selected{% endif %}>
+          {% if request.args.get('type') == 'Lost' %}selected{% endif %}>
           Lost
         </option>
         <option value="Found"
-          {% if request.args.get('report_type') == 'Found' %}selected{% endif %}>
+          {% if request.args.get('type') == 'Found' %}selected{% endif %}>
           Found
         </option>
       </select>
@@ -88,10 +85,10 @@
 
       <select name="status">
         <option value="">All statuses</option>
-        {% for status in statuses|default([], true) %}
-          <option value="{{ status }}"
-            {% if request.args.get('status') == status %}selected{% endif %}>
-            {{ status }}
+        {% for status_option in ['Open', 'Pending Claim', 'Returned'] %}
+          <option value="{{ status_option }}"
+            {% if request.args.get('status') == status_option %}selected{% endif %}>
+            {{ status_option }}
           </option>
         {% endfor %}
       </select>
@@ -106,9 +103,8 @@
   </form>
 </section>
 
-<!-- Separate reports section; no large outer panel -->
 <section>
-  <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin: 8px 0 12px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin:8px 0 12px;">
     <h2 style="margin:0;">📌 Recent Lost &amp; Found Reports</h2>
     <a class="button small" href="{{ url_for('new_report') }}">+ New Report</a>
   </div>
@@ -144,7 +140,18 @@
             <p><strong>Location:</strong> {{ report.location }}</p>
 
             {% if report.incident_date %}
-              <p><strong>Date:</strong> {{ report.incident_date }}</p>
+              <p>
+                <strong>
+                  {% if report.report_type == 'Lost' %}
+                    Date Lost:
+                  {% elif report.report_type == 'Found' %}
+                    Date Found:
+                  {% else %}
+                    Date:
+                  {% endif %}
+                </strong>
+                {{ report.incident_date }}
+              </p>
             {% endif %}
 
             <p>
@@ -155,8 +162,10 @@
             </p>
 
             <div class="card-actions" style="margin-top:auto;">
-              <a class="button small"
-                 href="{{ url_for('report_detail', report_id=report.id) }}">
+              <a
+                class="button small"
+                href="{{ url_for('report_detail', report_id=report.id) }}"
+              >
                 View Details
               </a>
             </div>
