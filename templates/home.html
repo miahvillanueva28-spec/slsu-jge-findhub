@@ -1,10 +1,335 @@
+
 {% extends "base.html" %}
 
 {% block title %}Home | SLSU JGE FindHub{% endblock %}
 
+{% block head %}
+<style>
+  /* Homepage-only styling */
+  .home-hero .sticker {
+    animation: homeStickerEnter .45s ease both;
+  }
+
+  .home-hero .sticker:nth-child(2) {
+    animation-delay: .06s;
+  }
+
+  .home-hero .sticker:nth-child(3) {
+    animation-delay: .12s;
+  }
+
+  .home-hero .sticker:nth-child(4) {
+    animation-delay: .18s;
+  }
+
+  .home-hero h2 {
+    letter-spacing: -.45px;
+  }
+
+  .home-hero .hero-description {
+    color: #405b49;
+  }
+
+  .home-hero .button {
+    box-shadow: 0 5px 13px rgba(0, 75, 43, .16);
+  }
+
+  .home-hero .button:hover {
+    box-shadow: 0 8px 19px rgba(0, 75, 43, .24);
+  }
+
+  .home-stats .stat {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .home-stats .stat::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: #087647;
+    opacity: .72;
+    transition: width .25s ease, opacity .25s ease;
+  }
+
+  .home-stats .stat:hover::before {
+    width: 6px;
+    opacity: 1;
+  }
+
+  .home-stats .stat-label {
+    color: #4d6254;
+    font-weight: 600;
+  }
+
+  .home-stats .stat strong {
+    overflow-wrap: anywhere;
+  }
+
+  .search-panel {
+    scroll-margin-top: 18px;
+  }
+
+  .search-heading {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 0 0 14px;
+  }
+
+  .search-heading .heading-icon {
+    display: inline-flex;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #e1f2e6;
+    font-size: 19px;
+  }
+
+  .search-description {
+    color: #5c6b61;
+    font-size: 13px;
+    margin: -5px 0 15px;
+  }
+
+  .search-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-top: 13px;
+  }
+
+  .reports-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 8px 0 14px;
+  }
+
+  .reports-heading h2 {
+    margin: 0;
+    font-size: clamp(18px, 2.4vw, 22px);
+  }
+
+  .reports-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    min-height: 26px;
+    padding: 3px 8px;
+    margin-left: 5px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .90);
+    color: var(--green);
+    border: 1px solid #d6e9db;
+    font-size: 12px;
+    vertical-align: middle;
+  }
+
+  .home-report-card {
+    animation: homeCardEnter .45s ease both;
+  }
+
+  .home-report-card:nth-child(2) {
+    animation-delay: .04s;
+  }
+
+  .home-report-card:nth-child(3) {
+    animation-delay: .08s;
+  }
+
+  .home-report-card:nth-child(4) {
+    animation-delay: .12s;
+  }
+
+  .home-report-card:nth-child(5) {
+    animation-delay: .16s;
+  }
+
+  .home-report-card:nth-child(6) {
+    animation-delay: .20s;
+  }
+
+  .home-report-card .report-image-wrap {
+    position: relative;
+    overflow: hidden;
+    background: #e8eee9;
+  }
+
+  .home-report-card .report-photo,
+  .home-report-card .placeholder-photo {
+    display: flex;
+    width: 100%;
+    height: 160px;
+    margin: 0;
+  }
+
+  .home-report-card .report-photo {
+    display: block;
+    transition: transform .45s ease;
+  }
+
+  .home-report-card:hover .report-photo {
+    transform: scale(1.045);
+  }
+
+  .home-report-card .report-content {
+    padding: 14px;
+  }
+
+  .home-report-card .report-content h3 {
+    line-height: 1.4;
+  }
+
+  .home-report-card .report-meta {
+    display: grid;
+    gap: 5px;
+    margin-top: 3px;
+  }
+
+  .home-report-card .report-meta p {
+    margin: 2px 0;
+  }
+
+  .home-report-card .report-meta strong {
+    color: #405447;
+  }
+
+  .report-status-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 5px;
+    font-size: 13px;
+  }
+
+  .report-status-row > strong {
+    color: #405447;
+  }
+
+  .home-report-card .card-actions {
+    margin-top: auto;
+    padding-top: 14px;
+  }
+
+  .home-report-card .card-actions .button {
+    text-align: center;
+  }
+
+  .home-empty-state {
+    padding: 32px 18px;
+    border: 1px dashed rgba(7, 92, 59, .30);
+    background: rgba(255, 255, 255, .84);
+  }
+
+  .home-empty-state .empty-icon {
+    display: flex;
+    width: 70px;
+    height: 70px;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    border-radius: 50%;
+    background: #e4f2e7;
+    font-size: 35px;
+  }
+
+  .home-empty-state h3 {
+    margin: 8px 0;
+  }
+
+  .home-empty-state p {
+    max-width: 430px;
+    margin: 0 auto 17px;
+    color: #5c6b61;
+    font-size: 13px;
+    line-height: 1.65;
+  }
+
+  @keyframes homeStickerEnter {
+    from {
+      opacity: 0;
+      transform: translateY(7px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes homeCardEnter {
+    from {
+      opacity: 0;
+      transform: translateY(9px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (max-width: 800px) {
+    .home-report-card .report-photo,
+    .home-report-card .placeholder-photo {
+      height: 150px;
+    }
+  }
+
+  @media (max-width: 500px) {
+    .search-heading .heading-icon {
+      width: 34px;
+      height: 34px;
+    }
+
+    .search-actions {
+      align-items: stretch;
+    }
+
+    .search-actions > * {
+      text-align: center;
+    }
+
+    .reports-heading {
+      align-items: flex-start;
+    }
+
+    .home-report-card .report-photo,
+    .home-report-card .placeholder-photo {
+      height: 190px;
+    }
+
+    .home-empty-state {
+      padding: 25px 13px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-hero .sticker,
+    .home-report-card {
+      animation: none;
+    }
+
+    .home-report-card:hover .report-photo {
+      transform: none;
+    }
+  }
+</style>
+{% endblock %}
+
 {% block hero %}
-<section class="hero">
-  <div class="sticker-row">
+<section class="hero home-hero">
+  <div class="sticker-row" aria-label="Common lost and found categories">
     <span class="sticker"><span>🎒</span> Bags</span>
     <span class="sticker"><span>🔑</span> Keys</span>
     <span class="sticker"><span>📱</span> Gadgets</span>
@@ -13,7 +338,7 @@
 
   <h2>Lost Something? Found Something?</h2>
 
-  <p>
+  <p class="hero-description">
     Welcome to SLSU JGE FindHub! Report lost belongings,
     share found items, and help reunite belongings with
     their rightful owners in the campus community.
@@ -27,75 +352,96 @@
 
 {% block content %}
 
-<section class="stats">
+<section class="stats home-stats" aria-label="Lost and found statistics">
   <div class="stat">
-    <span>📌 Active reports</span>
+    <span class="stat-label">📌 Active reports</span>
     <strong>{{ total_open|default(0) }}</strong>
   </div>
 
   <div class="stat">
-    <span>🎒 Lost items</span>
+    <span class="stat-label">🎒 Lost items</span>
     <strong>{{ total_lost|default(0) }}</strong>
   </div>
 
   <div class="stat">
-    <span>🔎 Found items</span>
+    <span class="stat-label">🔎 Found items</span>
     <strong>{{ total_found|default(0) }}</strong>
   </div>
 
   <div class="stat">
-    <span>💛 Community</span>
+    <span class="stat-label">💛 Community</span>
     <strong>FindHub</strong>
   </div>
 </section>
 
-<section class="panel">
-  <h2>🔎 Find an Item</h2>
+<section class="panel search-panel">
+  <h2 class="search-heading">
+    <span class="heading-icon" aria-hidden="true">🔎</span>
+    <span>Find an Item</span>
+  </h2>
+
+  <p class="search-description">
+    Search reports by keyword, report type, category, or status.
+  </p>
 
   <form method="GET" action="{{ url_for('home') }}">
     <div class="filter-grid">
-      <input
-        type="text"
-        name="q"
-        placeholder="Search item, description, or location..."
-        value="{{ request.args.get('q', '') }}"
-      >
+      <div>
+        <label for="search-query">Search keywords</label>
+        <input
+          id="search-query"
+          type="text"
+          name="q"
+          placeholder="Item, description, or location..."
+          value="{{ request.args.get('q', '') }}"
+        >
+      </div>
 
-      <select name="type">
-        <option value="">All report types</option>
-        <option value="Lost"
-          {% if request.args.get('type') == 'Lost' %}selected{% endif %}>
-          Lost
-        </option>
-        <option value="Found"
-          {% if request.args.get('type') == 'Found' %}selected{% endif %}>
-          Found
-        </option>
-      </select>
-
-      <select name="category">
-        <option value="">All categories</option>
-        {% for category in categories|default([], true) %}
-          <option value="{{ category }}"
-            {% if request.args.get('category') == category %}selected{% endif %}>
-            {{ category }}
+      <div>
+        <label for="report-type">Report type</label>
+        <select id="report-type" name="type">
+          <option value="">All report types</option>
+          <option value="Lost"
+            {% if request.args.get('type') == 'Lost' %}selected{% endif %}>
+            Lost
           </option>
-        {% endfor %}
-      </select>
-
-      <select name="status">
-        <option value="">All statuses</option>
-        {% for status_option in ['Open', 'Pending Claim', 'Returned'] %}
-          <option value="{{ status_option }}"
-            {% if request.args.get('status') == status_option %}selected{% endif %}>
-            {{ status_option }}
+          <option value="Found"
+            {% if request.args.get('type') == 'Found' %}selected{% endif %}>
+            Found
           </option>
-        {% endfor %}
-      </select>
+        </select>
+      </div>
+
+      <div>
+        <label for="report-category">Category</label>
+        <select id="report-category" name="category">
+          <option value="">All categories</option>
+          {% for category in categories|default([], true) %}
+            <option value="{{ category }}"
+              {% if request.args.get('category') == category %}selected{% endif %}>
+              {{ category }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <label for="report-status">Status</label>
+        <select id="report-status" name="status">
+          <option value="">All statuses</option>
+          {% for status_option in ['Open', 'Pending Claim', 'Returned'] %}
+            <option value="{{ status_option }}"
+              {% if request.args.get('status') == status_option %}selected{% endif %}>
+              {{ status_option }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
     </div>
 
-    <div class="card-actions">
+    <div class="search-actions">
       <button type="submit">🔎 Search Reports</button>
+
       <a class="button secondary" href="{{ url_for('home') }}">
         Clear Filters
       </a>
@@ -103,31 +449,42 @@
   </form>
 </section>
 
-<section>
-  <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin:8px 0 12px;">
-    <h2 style="margin:0;">📌 Recent Lost &amp; Found Reports</h2>
-    <a class="button small" href="{{ url_for('new_report') }}">+ New Report</a>
+<section aria-labelledby="recent-reports-heading">
+  <div class="reports-heading">
+    <h2 id="recent-reports-heading">
+      📌 Recent Lost &amp; Found Reports
+      {% if reports %}
+        <span class="reports-count">{{ reports|length }}</span>
+      {% endif %}
+    </h2>
+
+    <a class="button small" href="{{ url_for('new_report') }}">
+      + New Report
+    </a>
   </div>
 
   {% if reports %}
     <div class="report-grid">
       {% for report in reports %}
-        <article class="report-card">
-          {% if report.photo %}
-            <img
-              class="report-photo"
-              src="{{ url_for('uploaded_photo', filename=report.photo) }}"
-              alt="{{ report.item_name }}"
-            >
-          {% else %}
-            <div class="placeholder-photo">
-              {% if report.report_type == 'Lost' %}
-                🎒
-              {% else %}
-                🔎
-              {% endif %}
-            </div>
-          {% endif %}
+        <article class="report-card home-report-card">
+          <div class="report-image-wrap">
+            {% if report.photo %}
+              <img
+                class="report-photo"
+                src="{{ url_for('uploaded_photo', filename=report.photo) }}"
+                alt="{{ report.item_name }}"
+                loading="lazy"
+              >
+            {% else %}
+              <div class="placeholder-photo" aria-label="No item photo available">
+                {% if report.report_type == 'Lost' %}
+                  🎒
+                {% else %}
+                  🔎
+                {% endif %}
+              </div>
+            {% endif %}
+          </div>
 
           <div class="report-content">
             <span class="tag {% if report.report_type == 'Found' %}found{% endif %}">
@@ -136,37 +493,48 @@
 
             <h3>{{ report.item_name }}</h3>
 
-            <p><strong>Category:</strong> {{ report.category }}</p>
-            <p><strong>Location:</strong> {{ report.location }}</p>
-
-            {% if report.incident_date %}
+            <div class="report-meta">
               <p>
-                <strong>
-                  {% if report.report_type == 'Lost' %}
-                    Date Lost:
-                  {% elif report.report_type == 'Found' %}
-                    Date Found:
-                  {% else %}
-                    Date:
-                  {% endif %}
-                </strong>
-                {{ report.incident_date }}
+                <strong>Category:</strong>
+                {{ report.category }}
               </p>
-            {% endif %}
 
-            <p>
+              <p>
+                <strong>Location:</strong>
+                {{ report.location }}
+              </p>
+
+              {% if report.incident_date %}
+                <p>
+                  <strong>
+                    {% if report.report_type == 'Lost' %}
+                      Date Lost:
+                    {% elif report.report_type == 'Found' %}
+                      Date Found:
+                    {% else %}
+                      Date:
+                    {% endif %}
+                  </strong>
+                  {{ report.incident_date }}
+                </p>
+              {% endif %}
+            </div>
+
+            <div class="report-status-row">
               <strong>Status:</strong>
+
               <span class="tag {% if report.status == 'Pending Claim' %}pending{% elif report.status in ['Returned', 'Archived'] %}returned{% endif %}">
                 {{ report.status }}
               </span>
-            </p>
+            </div>
 
-            <div class="card-actions" style="margin-top:auto;">
+            <div class="card-actions">
               <a
                 class="button small"
                 href="{{ url_for('report_detail', report_id=report.id) }}"
+                aria-label="View details for {{ report.item_name }}"
               >
-                View Details
+                View Details →
               </a>
             </div>
           </div>
@@ -174,11 +542,26 @@
       {% endfor %}
     </div>
   {% else %}
-    <div class="empty-state">
-      <div style="font-size:38px;">🕵️</div>
+    <div class="empty-state home-empty-state">
+      <div class="empty-icon" aria-hidden="true">🕵️</div>
+
       <h3>No reports found</h3>
-      <p>No items match your search. Try another filter or create a report.</p>
-      <a class="button" href="{{ url_for('new_report') }}">Submit a Report</a>
+
+      <p>
+        No items match your search right now.
+        Try changing your filters or submit a new report to help
+        the SLSU JGE community.
+      </p>
+
+      <a class="button" href="{{ url_for('new_report') }}">
+        ✨ Submit a Report
+      </a>
+
+      {% if request.args %}
+        <a class="button secondary" href="{{ url_for('home') }}">
+          Clear Filters
+        </a>
+      {% endif %}
     </div>
   {% endif %}
 </section>
