@@ -1,3 +1,4 @@
+
 import csv
 import io
 import os
@@ -186,18 +187,18 @@ def home():
 
     reports = query.order_by(Report.created_at.desc()).all()
 
-    # Active reports: exclude Returned and Archived reports.
+    # Count active reports, excluding returned and archived reports.
     total_open = Report.query.filter(
         Report.status.notin_(["Returned", "Archived"])
     ).count()
 
-    # Lost reports: exclude archived reports.
+    # Lost reports, excluding archived records.
     total_lost = Report.query.filter(
         Report.report_type == "Lost",
         Report.status != "Archived"
     ).count()
 
-    # Found reports: exclude archived reports.
+    # Found reports, excluding archived records.
     total_found = Report.query.filter(
         Report.report_type == "Found",
         Report.status != "Archived"
@@ -211,8 +212,8 @@ def home():
         status=status,
         q=search,
         total_open=total_open,
-        total_lost=total_lost,
         total_found=total_found,
+        total_lost=total_lost,
         categories=CATEGORIES,
     )
 
@@ -470,28 +471,65 @@ def admin_login():
 @app.route("/admin")
 @admin_required
 def admin_dashboard():
-    reports = Report.query.order_by(
+    # Separate active Lost and Found reports.
+    lost_reports = Report.query.filter_by(
+        report_type="Lost"
+    ).filter(
+        Report.status != "Archived"
+    ).order_by(
         Report.created_at.desc()
     ).all()
 
-    claims = Claim.query.order_by(
-        Claim.created_at.desc()
-    ).limit(6).all()
+    found_reports = Report.query.filter_by(
+        report_type="Found"
+    ).filter(
+        Report.status != "Archived"
+    ).order_by(
+        Report.created_at.desc()
+    ).all()
+
+    # Actual pending claim requests.
+    pending_claims = Claim.query.filter_by(
+        status="Pending"
+    ).count()
+
+    # Reports whose status is Pending Claim.
+    reports_pending_claim = Report.query.filter_by(
+        status="Pending Claim"
+    ).count()
 
     stats = {
         "all": Report.query.filter(
             Report.status != "Archived"
         ).count(),
-        "open": Report.query.filter_by(status="Open").count(),
-        "claims": Claim.query.filter_by(status="Pending").count(),
-        "returned": Report.query.filter_by(status="Returned").count(),
+
+        "open": Report.query.filter_by(
+            status="Open"
+        ).count(),
+
+        "claims": pending_claims,
+
+        "reports_pending_claim": reports_pending_claim,
+
+        "returned": Report.query.filter_by(
+            status="Returned"
+        ).count(),
+
+        "lost": len(lost_reports),
+
+        "found": len(found_reports),
     }
+
+    claims = Claim.query.order_by(
+        Claim.created_at.desc()
+    ).limit(6).all()
 
     return render_template(
         "admin_dashboard.html",
-        reports=reports,
+        lost_reports=lost_reports,
+        found_reports=found_reports,
         claims=claims,
-        stats=stats
+        stats=stats,
     )
 
 
