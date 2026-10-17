@@ -1,3 +1,4 @@
+```html
 {% extends "base.html" %}
 {% block title %}{{ report.item_name }} | FindHub{% endblock %}
 
@@ -44,7 +45,19 @@
 
       <p><strong>Category:</strong> {{ report.category }}</p>
       <p><strong>Location:</strong> {{ report.location }}</p>
-      <p><strong>Date lost/found:</strong> {{ report.incident_date }}</p>
+
+      <p>
+        <strong>
+          {% if report.report_type == 'Lost' %}
+            Date Lost:
+          {% elif report.report_type == 'Found' %}
+            Date Found:
+          {% else %}
+            Date:
+          {% endif %}
+        </strong>
+        {{ report.incident_date }}
+      </p>
 
       <p><strong>Description:</strong></p>
       <p style="white-space:pre-wrap">{{ report.description }}</p>
@@ -117,3 +130,4 @@
 </section>
 {% endif %}
 {% endblock %}
+```
