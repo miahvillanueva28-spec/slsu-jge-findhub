@@ -1,81 +1,160 @@
+
 {% extends "base.html" %}
 {% block title %}Claim Requests | FindHub{% endblock %}
 
 {% block content %}
+
 <section class="panel">
   <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
     <div>
       <h2>🤝 Claim Requests</h2>
       <p class="help">
-        Review proof privately. Approving a claim marks its report as Returned.
+        Review ownership proof and update claim decisions.
+        Approved claims mark the associated report as Returned.
       </p>
     </div>
 
     <a class="button secondary" href="{{ url_for('admin_dashboard') }}">
-      ← Dashboard
+      ← Back to Dashboard
     </a>
   </div>
 
+  <!-- CLAIM STATISTICS -->
+  <div class="stats">
+    <div class="stat">
+      <span>📋 All Claims</span>
+      <strong>{{ claims|length }}</strong>
+    </div>
+
+    <div class="stat">
+      <span>⏳ Pending</span>
+      <strong>{{ claims|selectattr('status', 'equalto', 'Pending')|list|length }}</strong>
+    </div>
+
+    <div class="stat">
+      <span>✅ Approved</span>
+      <strong>{{ claims|selectattr('status', 'equalto', 'Approved')|list|length }}</strong>
+    </div>
+
+    <div class="stat">
+      <span>❌ Rejected</span>
+      <strong>{{ claims|selectattr('status', 'equalto', 'Rejected')|list|length }}</strong>
+    </div>
+  </div>
+
+  <!-- SEARCH AND FILTER -->
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin-top:20px">
+    <div style="flex:1;min-width:200px">
+      <label for="claim-search">Search claims</label>
+      <input
+        id="claim-search"
+        type="search"
+        placeholder="Search item, claimant, contact, or claim ID..."
+      >
+    </div>
+
+    <div style="min-width:180px">
+      <label for="claim-filter">Filter by status</label>
+      <select id="claim-filter">
+        <option value="all">All statuses</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+      </select>
+    </div>
+  </div>
+
   {% if claims %}
-    <div class="table-wrap">
-      <table>
+    <div class="table-wrap" style="margin-top:20px">
+      <table id="claims-table">
         <thead>
           <tr>
-            <th>Item / Report</th>
+            <th>Claim / Item</th>
             <th>Claimant</th>
-            <th>Proof of ownership</th>
-            <th>Review</th>
+            <th>Proof of Ownership</th>
+            <th>Status / Review</th>
           </tr>
         </thead>
 
         <tbody>
           {% for c in claims %}
-          <tr>
+          <tr
+            class="claim-row"
+            data-status="{{ c.status|lower }}"
+          >
             <td>
-              <strong>{{ c.report.item_name }}</strong><br>
-              <span class="help">
-                Report #{{ c.report.id }} · {{ c.report.report_type }}
-              </span><br>
-              <a href="{{ url_for('report_detail', report_id=c.report.id) }}">
-                View report
-              </a>
+              <strong>Claim #{{ c.id }}</strong><br>
+
+              {% if c.report %}
+                <strong>{{ c.report.item_name }}</strong><br>
+                <span class="help">
+                  Report #{{ c.report.id }} · {{ c.report.report_type }}
+                </span><br>
+
+                <span class="help">
+                  Report status: {{ c.report.status }}
+                </span><br>
+
+                {% if c.report.status != 'Archived' %}
+                  <a href="{{ url_for('report_detail', report_id=c.report.id) }}">
+                    View report
+                  </a>
+                {% endif %}
+              {% else %}
+                <span class="help">Associated report unavailable</span>
+              {% endif %}
             </td>
 
             <td>
-              {{ c.claimant_name }}<br>
+              <strong>{{ c.claimant_name }}</strong><br>
 
               {% if c.student_or_staff_id %}
-                <span class="help">ID: {{ c.student_or_staff_id }}</span><br>
+                <span class="help">
+                  Student/Staff ID: {{ c.student_or_staff_id }}
+                </span><br>
               {% endif %}
 
-              <span class="help">{{ c.contact }}</span>
+              <span class="help">Contact: {{ c.contact }}</span><br>
+
+              <span class="help">
+                Submitted:
+                {{ c.created_at.strftime('%b %d, %Y %I:%M %p') }}
+              </span>
             </td>
 
-            <td style="white-space:pre-wrap;min-width:220px">
-              {{ c.proof }}
-            </td>
+            <td style="white-space:pre-wrap;min-width:220px;max-width:400px;overflow-wrap:anywhere">{{ c.proof }}</td>
 
             <td>
-              <span class="tag {% if c.status == 'Pending' %}pending{% endif %}">
-                {{ c.status }}
-              </span>
+              {% if c.status|lower == 'pending' %}
+                <span class="tag pending">⏳ Pending</span>
+              {% elif c.status|lower == 'approved' %}
+                <span class="tag returned">✅ Approved</span>
+              {% elif c.status|lower == 'rejected' %}
+                <span class="tag">❌ Rejected</span>
+              {% else %}
+                <span class="tag">{{ c.status }}</span>
+              {% endif %}
 
               <form
                 method="POST"
                 action="{{ url_for('update_claim_status', claim_id=c.id) }}"
                 style="margin-top:10px"
+                onsubmit="return confirm('Save this claim decision?');"
               >
                 <label for="claim-{{ c.id }}">Update status</label>
 
-                <select id="claim-{{ c.id }}" name="status">
+                <select id="claim-{{ c.id }}" name="status" required>
                   {% for s in ['Pending', 'Approved', 'Rejected'] %}
-                    <option value="{{ s }}" {% if c.status == s %}selected{% endif %}>
+                    <option
+                      value="{{ s }}"
+                      {% if c.status|lower == s|lower %}selected{% endif %}
+                    >
                       {{ s }}
                     </option>
                   {% endfor %}
                 </select>
 
-                <button type="submit" style="margin-top:8px">
+                <button type="submit" class="small" style="margin-top:8px">
                   Save Review
                 </button>
               </form>
@@ -85,12 +164,62 @@
         </tbody>
       </table>
     </div>
+
+    <p id="claims-no-results" class="help" style="display:none;margin-top:16px">
+      No claims match your search or selected filter.
+    </p>
+
   {% else %}
     <div class="empty-state">
       <div style="font-size:42px">📭</div>
-      <h3>No claim requests yet</h3>
-      <p>New claim requests will appear here.</p>
+      <h3>No Claim Requests Yet</h3>
+      <p>
+        No claim records have been saved. New requests will appear here
+        after someone submits a claim for a report.
+      </p>
+      <a class="button secondary" href="{{ url_for('admin_dashboard') }}">
+        Return to Dashboard
+      </a>
     </div>
   {% endif %}
 </section>
+
+{% if claims %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const searchInput = document.getElementById("claim-search");
+  const statusFilter = document.getElementById("claim-filter");
+  const rows = Array.from(document.querySelectorAll(".claim-row"));
+  const noResults = document.getElementById("claims-no-results");
+
+  function filterClaims() {
+    const query = searchInput.value.trim().toLowerCase();
+    const selectedStatus = statusFilter.value;
+    let visibleCount = 0;
+
+    rows.forEach(function (row) {
+      const rowText = row.textContent.toLowerCase();
+      const rowStatus = row.dataset.status;
+
+      const matchesSearch = rowText.includes(query);
+      const matchesStatus =
+        selectedStatus === "all" || rowStatus === selectedStatus;
+
+      const show = matchesSearch && matchesStatus;
+      row.style.display = show ? "" : "none";
+
+      if (show) {
+        visibleCount++;
+      }
+    });
+
+    noResults.style.display = visibleCount === 0 ? "block" : "none";
+  }
+
+  searchInput.addEventListener("input", filterClaims);
+  statusFilter.addEventListener("change", filterClaims);
+});
+</script>
+{% endif %}
+
 {% endblock %}
